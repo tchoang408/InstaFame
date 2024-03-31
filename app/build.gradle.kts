@@ -7,6 +7,10 @@ android {
     namespace = "com.example.instafameproj"
     compileSdk = 34
 
+    buildFeatures{
+        dataBinding = true
+        viewBinding = true
+    }
     defaultConfig {
         applicationId = "com.example.instafameproj"
         minSdk = 24
