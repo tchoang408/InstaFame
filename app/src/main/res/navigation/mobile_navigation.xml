@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/user_profile"
-        android:name="com.example.instafameproj.ui.notifications.UserProfileFragment"
+        android:name="com.example.instafameproj.ui.userprofile.UserProfileFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
 </navigation>
