@@ -34,14 +34,17 @@ class UserProfileFragment : Fragment() {
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textNotifications
-        userProfileViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        userProfileViewModel.userIdLabel.observe(viewLifecycleOwner) {
+            binding.userIdLabel.text = it
+        }
+
+        userProfileViewModel.userEmailLabel.observe(viewLifecycleOwner) {
+            binding.userEmailLabel.text = it
         }
 
         // Observe LiveData for user data
         userProfileViewModel.userEmail.observe(viewLifecycleOwner, Observer { email ->
-            binding.email.text = email
+            binding.userEmail.text = email
         })
 
         userProfileViewModel.userId.observe(viewLifecycleOwner, Observer { userId ->

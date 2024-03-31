@@ -6,52 +6,54 @@
     android:layout_height="match_parent"
     tools:context=".ui.userprofile.UserProfileFragment">
 
+<!--    <ImageView-->
+<!--        android:id="@+id/user_avatar"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:layout_gravity="center_horizontal"-->
+<!--        android:src="https://i.pravatar.cc/300"  android:contentDescription="@string/user_avatar" />-->
+
     <TextView
-        android:id="@+id/text_notifications"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        android:id="@+id/user_email_label"
+        android:layout_width="349dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="209dp"
+        android:text="@string/user_email_label"
+        android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.397" />
+        tools:layout_editor_absoluteX="32dp" />
+
+    <TextView
+        android:id="@+id/user_email"
+        android:layout_width="348dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/user_email"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintTop_toBottomOf="@+id/user_email_label"
+        tools:layout_editor_absoluteX="34dp" />
+
+    <TextView
+        android:id="@+id/user_id_label"
+        android:layout_width="356dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/user_id_label"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/user_email"
+        tools:layout_editor_absoluteX="31dp" />
 
     <TextView
         android:id="@+id/user_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
+        android:layout_width="351dp"
+        android:layout_height="21dp"
+        android:layout_marginStart="32dp"
+        android:text="1234567890"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.347" />
+        app:layout_constraintTop_toBottomOf="@+id/user_id_label"
+        app:layout_constraintVertical_bias="0.084" />
 
-    <TextView
-        android:id="@+id/email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.294" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
