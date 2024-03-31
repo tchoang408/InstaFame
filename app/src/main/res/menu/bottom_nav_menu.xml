@@ -4,16 +4,19 @@
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/title_home" />
+        android:title="@string/title_home"
+        android:visible="true" />
 
     <item
         android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/title_dashboard" />
+        android:icon="@drawable/outline_file_upload_24"
+        android:title="@string/title_dashboard"
+        android:visible="true" />
 
     <item
         android:id="@+id/user_profile"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/title_notifications" />
-
+        android:icon="@drawable/baseline_assignment_ind_24"
+        android:title="@string/title_notifications"
+        android:visible="true"
+    />
 </menu>
