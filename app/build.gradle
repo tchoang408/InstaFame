@@ -65,4 +65,8 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.16.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
 
+
+    implementation 'de.hdodenhof:circleimageview:2.1.0'
+
+
 }

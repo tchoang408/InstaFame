@@ -1,5 +1,6 @@
 package com.example.instafameproj.ui.userprofile
 
+import androidx.activity.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,8 +22,6 @@ class UserProfileViewModel : ViewModel() {
 
     private var currentAuthUser = invalidUser
 
-
-
     // LiveData objects to hold user data
     private val _userEmail = MutableLiveData<String>()
     private val _userId = MutableLiveData<String>()
@@ -43,6 +42,7 @@ class UserProfileViewModel : ViewModel() {
         _userId.value = userId
     }
 
+    
 
     fun setCurrentAuthUser(user: User) {
         currentAuthUser = user
