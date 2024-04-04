@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "877284295803",
+    "project_id": "instafame-77b7f",
+    "storage_bucket": "instafame-77b7f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877284295803:android:98cdf20450837b7eac0ede",
+        "android_client_info": {
+          "package_name": "com.example.instafameproj"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCA8f8ocuHPNAFjFT2I5Pv8xBXDxOwjb1k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

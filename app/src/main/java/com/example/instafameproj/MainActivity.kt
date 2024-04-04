@@ -1,6 +1,9 @@
 package com.example.instafameproj
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.viewModels
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -8,11 +11,13 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.instafameproj.databinding.ActivityMainBinding
+import com.example.instafameproj.ui.userprofile.UserProfileViewModel
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
+    private lateinit var authUser : AuthUser
+    private val viewModel: UserProfileViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -31,5 +36,22 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart")
+        // Create authentication object.  This will log the user in if needed
+        authUser = AuthUser(activityResultRegistry)
+        // authUser needs to observe our lifecycle so it can run login activity
+        lifecycle.addObserver(authUser)
+
+        authUser.observeUser().observe(this) {
+            // XXX Write me, user status has changed
+            Log.d("username", it.name)
+            Log.d("email", it.email)
+            Log.d("uid", it.uid)
+            viewModel.setCurrentAuthUser(it)
+        }
     }
 }
