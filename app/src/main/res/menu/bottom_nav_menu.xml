@@ -14,9 +14,9 @@
         android:visible="true" />
 
     <item
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/user_profile"
         android:icon="@drawable/baseline_assignment_ind_24"
         android:title="@string/title_notifications"
-        android:visible="true" />
-
+        android:visible="true"
+    />
 </menu>
