@@ -1,5 +1,6 @@
 package com.example.instafameproj
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
@@ -10,6 +11,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -40,6 +42,7 @@ class AuthUser(private val registry: ActivityResultRegistry) :
     }
     // https://developer.android.com/training/basics/intents/result#separate
     private lateinit var signInLauncher: ActivityResultLauncher<Intent>
+
     private var liveUser = MutableLiveData<User>().apply {
         this.postValue(invalidUser)
     }
@@ -97,19 +100,20 @@ class AuthUser(private val registry: ActivityResultRegistry) :
                 AuthUI.IdpConfig.EmailBuilder().build()
             )
 
-            // XXX Write me. Create and launch sign-in intent
-            // setIsSmartLockEnabled(false) solves some problems
-
             val signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
                 .setIsSmartLockEnabled(false)
                 .build()
             signInLauncher.launch(signInIntent)
+
+
         }
     }
     fun logout() {
         if(user() == null) return
         Firebase.auth.signOut()
     }
+
+
 }
