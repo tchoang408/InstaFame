@@ -3,12 +3,10 @@ package com.example.instafameproj.ui.dashboard
 import android.net.Uri
 import android.util.Log
 import android.widget.ImageView
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.auth.FirebaseAuth
+import com.example.instafameproj.ViewModelDBHelper
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.StorageReference
-
 
 
 // Store files in firebase storage
@@ -16,12 +14,12 @@ class Storage {
     // Create a storage reference from our app
     private val photoStorage: StorageReference =
         FirebaseStorage.getInstance().reference.child("videos")
-
+    private val dbhelpter = ViewModelDBHelper()
     // https://firebase.google.com/docs/storage/android/upload-files#upload_from_a_local_file
-    fun uploadImage(uri: Uri, uuid: String, timeStamp: String, uploadSuccess:(Long)->Unit) {
+    fun uploadVideoStorage(uri: Uri, uuid: String, timeStamp: String, uploadSuccess:(Long)->Unit) {
 
         //val file = Uri.fromFile(localFile)
-        val uuidRef = photoStorage.child(uuid).child("test.mp4")
+        val uuidRef = photoStorage.child(uuid).child("${timeStamp}.mp4")
         val metadata = StorageMetadata.Builder()
             .setContentType("video/mp4")
             .build()
@@ -30,6 +28,7 @@ class Storage {
                 uuidRef.downloadUrl.addOnSuccessListener {downloadUrl->
                     //video model store in firebase firestore
                     Log.d("post_video" ,downloadUrl.toString())
+                    dbhelpter.updateUserVideoUrl(downloadUrl.toString(),uuid)
                 }
             }
 
@@ -90,14 +89,13 @@ class Storage {
         uidRef.downloadUrl
         uidRef.listAll()
             .addOnSuccessListener {
-                var a = listOf(it.items)
                 for(video in it.items){
                     video.downloadUrl.addOnSuccessListener {
                         Log.d("download_url_", it.toString())
                     }
 
                 }
-                resultListener(a[0])
+                resultListener(it.items)
             }
             .addOnFailureListener {
                 Log.d("download_url",it.message.toString())

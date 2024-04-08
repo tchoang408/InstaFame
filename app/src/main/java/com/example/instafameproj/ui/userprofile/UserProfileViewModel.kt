@@ -5,13 +5,14 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.instafameproj.User
+import com.example.instafameproj.VideoMeta
 import com.example.instafameproj.ViewModelDBHelper
 import com.example.instafameproj.invalidUser
 import com.example.instafameproj.ui.dashboard.Storage
+import com.google.firebase.Timestamp
 import com.google.firebase.storage.StorageReference
-import java.text.SimpleDateFormat
-import java.util.Date
 
 
 enum class SortColumn {
@@ -25,9 +26,9 @@ class UserProfileViewModel : ViewModel() {
     private var UserName = MutableLiveData<String>()
     private var Quotes = MutableLiveData<String>()
     private val dbHelp = ViewModelDBHelper()
-    private var userMetaList = MutableLiveData<List<UserMeta>>()
     private var userMetaLocal = MutableLiveData<UserMeta>()
-
+    private var videoMeta = MutableLiveData<List<VideoMeta>>()
+    private var videoList = mutableListOf<VideoMeta>()
     private val storage = Storage()
 
 
@@ -41,8 +42,9 @@ class UserProfileViewModel : ViewModel() {
         var userMeta = UserMeta(
             ownerName = currentUser.name,
             ownerUid = currentUser.uid,
-            uuid = uuid
+            uuid = uuid,
         )
+
         Log.d("user", currentUser.name)
         Log.d("user", currentUser.uid)
         Log.d("user", uuid)
@@ -98,22 +100,39 @@ class UserProfileViewModel : ViewModel() {
         return userMetaLocal.value!!
     }
 
+    fun setUserMeta(user: UserMeta){
+        userMetaLocal.postValue(user)
+    }
+
     fun uploadVideos(uri: Uri){
-        val currentTimeMillis = System.currentTimeMillis()
-        val currentTimeSeconds = currentTimeMillis / 1000
-        val currentTime = SimpleDateFormat("HH:mm:ss").format(Date(currentTimeSeconds * 1000))
-        println("Current time: $currentTime")
-
-        storage.uploadImage(uri, userMetaLocal.value?.uuid!!,
-            currentTime) {
-
+           storage.uploadVideoStorage(uri, userMetaLocal.value?.uuid!!,
+               Timestamp.now().seconds.toString()
+           ) {
+               dbHelp.fetchUserMeta(userMetaLocal.value!!.uuid) {
+                   setUserMeta(it)
+               }
         }
     }
 
-    fun fetchVideos( resultListener: (List<StorageReference>)->Unit){
+    fun getVideoList(): List<VideoMeta>{
+        return videoList
+    }
+
+    fun fetchVideos( resultListener: (List<VideoMeta>)->Unit){
 
         storage.getVideos(userMetaLocal.value?.uuid!!){
-            resultListener(it)
+
+            for( ref in it){
+                ref.downloadUrl.addOnSuccessListener {
+                    var video = VideoMeta(
+                        videoId = ref.name,
+                        url = it.toString()
+                    )
+                    videoList.add(video)
+                    resultListener(videoList)
+                }
+
+            }
         }
     }
 
