@@ -17,4 +17,9 @@
         app:use_controller="false"
         app:resize_mode="fill"
         />
+    <ImageView
+        android:id="@+id/image_thumbnail"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </androidx.cardview.widget.CardView>

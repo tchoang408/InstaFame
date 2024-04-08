@@ -4,6 +4,8 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.TextureView
+import android.view.View
 import android.view.ViewGroup
 import android.widget.VideoView
 import androidx.recyclerview.widget.DiffUtil
@@ -60,9 +62,11 @@ class UserVideosListAdapter(private val viewModel: UserProfileViewModel,
 
 
             val player = ExoPlayer.Builder(context).build()
+
             rowBinding.videoView1.player = player
             val mediaItem: MediaItem = MediaItem.fromUri(uri1)
             player.setMediaItem(mediaItem)
+
             player.prepare()
             player.playWhenReady = false
 
@@ -86,7 +90,13 @@ class UserVideosListAdapter(private val viewModel: UserProfileViewModel,
         }
         override fun areContentsTheSame(oldItem: VideoModel, newItem: VideoModel): Boolean {
             return oldItem.uuid == newItem.uuid
+                    && oldItem.videoId == newItem.videoId
+                    && oldItem.url == newItem.url
+                    && oldItem.title == newItem.title
+                    && oldItem.createdTime == newItem.createdTime
 
         }
     }
+
+
 }

@@ -67,6 +67,6 @@ class HomeFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        adapter.startListening()
+        adapter.stopListening()
     }
 }
