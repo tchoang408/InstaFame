@@ -1,54 +1,49 @@
 package com.example.instafameproj
 
 import android.util.Log
-import com.example.instafameproj.ui.userprofile.SortInfo
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-import com.example.instafameproj.ui.userprofile.UserMeta
+import com.example.instafameproj.ui.Model.UserModel
+import com.example.instafameproj.ui.Model.VideoModel
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.toObject
 
 class ViewModelDBHelper {
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val rootCollection = "Users"
+    private val userRootCollection = "Users"
+    private val videoRootCollection = "Videos"
 
     fun createUserMeta(
-        userMeta: UserMeta,
-        resultListener: (UserMeta)->Unit
+        userModel: UserModel,
+        resultListener: (UserModel)->Unit
     ) {
-        var a = listOf( ("ownerUid"), ("uuid"),("videoUrl"))
-        db.collection(rootCollection).document(userMeta.uuid)
-            .set(userMeta, SetOptions.mergeFields(a))
+        var a = listOf(("uuid"))
+        db.collection(userRootCollection).document(userModel.uuid)
+            .set(userModel, SetOptions.mergeFields(a))
             .addOnSuccessListener {
-                Log.d("user_added",
-                    "user_create "  + userMeta.ownerName + " id: " + userMeta.firestoreID
-                )
-                fetchUserMeta(userMeta.uuid,resultListener)
+
+                fetchUserMeta(userModel.uuid,resultListener)
             }
             .addOnFailureListener { e ->
-                Log.d("user_added",
-                    "user_failed "  + userMeta.ownerName + " id: " + userMeta.firestoreID
-                )
+
                 Log.w(javaClass.simpleName, "Error ", e)
             }
     }
 
     fun fetchUserMeta(
         uuid: String,
-        resultListener: (UserMeta) -> Unit
+        resultListener: (UserModel) -> Unit
     ) {
 
-        var userRef = db.collection(rootCollection).document(uuid)
+        var userRef = db.collection(userRootCollection).document(uuid)
         userRef.get()
             .addOnSuccessListener {
-                resultListener(it.toObject(UserMeta::class.java)!!)
+                resultListener(it.toObject(UserModel::class.java)!!)
             }
     }
 
 
     fun updateUserMetaQuotes(quotes: String,uid:String){
-        val userRef = db.collection(rootCollection).document(uid)
+        val userRef = db.collection(userRootCollection).document(uid)
         Log.d("uid", uid.toString())
         // Set the "isCapital" field of the city 'DC'
         userRef
@@ -61,7 +56,7 @@ class ViewModelDBHelper {
     }
 
     fun updateUserMetaName(name: String,uid:String){
-        val userRef = db.collection(rootCollection).document(uid)
+        val userRef = db.collection(userRootCollection).document(uid)
         Log.d("uid", uid.toString())
         userRef
             .update("ownerName", name)
@@ -71,15 +66,42 @@ class ViewModelDBHelper {
             .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }
 
     }
-    fun updateUserVideoUrl(url: String,uid:String){
-        val userRef = db.collection(rootCollection).document(uid)
+    fun updateUserVideoUrl(url: String,uid:String, resultListener: () -> Unit){
+        val userRef = db.collection(userRootCollection).document(uid)
         Log.d("videoUrl", uid.toString())
         userRef
             .update("videoUrl", FieldValue.arrayUnion(url))
             .addOnSuccessListener{
                 Log.d("User_Update", "DocumentSnapshot successfully updated!")
+                resultListener()
             }
             .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }
 
+    }
+    fun fetchVideoMeta(
+        uuid: String,
+        resultListener: (VideoModel) -> Unit
+    ) {
+
+        var userRef = db.collection(videoRootCollection).document(uuid)
+        userRef.get()
+            .addOnSuccessListener {
+                resultListener(it.toObject(VideoModel::class.java)!!)
+            }
+    }
+    fun createVideoMeta(
+        videoModel: VideoModel,
+        resultListener: (VideoModel)->Unit
+    ) {
+        var a = listOf(("uuid"))
+
+        db.collection(videoRootCollection).document(videoModel.videoId)
+            .set(videoModel)
+            .addOnSuccessListener {
+                fetchVideoMeta(videoModel.videoId,resultListener)
+            }
+            .addOnFailureListener { e ->
+                Log.w("Upload_video_model", "Error ", e)
+            }
     }
 }

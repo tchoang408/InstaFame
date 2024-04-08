@@ -5,51 +5,35 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.instafameproj.User
-import com.example.instafameproj.VideoMeta
+import com.example.instafameproj.ui.Model.VideoModel
 import com.example.instafameproj.ViewModelDBHelper
 import com.example.instafameproj.invalidUser
+import com.example.instafameproj.ui.Model.UserModel
 import com.example.instafameproj.ui.dashboard.Storage
 import com.google.firebase.Timestamp
-import com.google.firebase.storage.StorageReference
 
 
-enum class SortColumn {
-    TITLE,
-    SIZE
-}
-data class SortInfo(val sortColumn: SortColumn, val ascending: Boolean)
 class UserProfileViewModel : ViewModel() {
 
     private var CurrentAuthUser = invalidUser
     private var UserName = MutableLiveData<String>()
     private var Quotes = MutableLiveData<String>()
     private val dbHelp = ViewModelDBHelper()
-    private var userMetaLocal = MutableLiveData<UserMeta>()
-    private var videoMeta = MutableLiveData<List<VideoMeta>>()
-    private var videoList = mutableListOf<VideoMeta>()
+    private var currentUser = MutableLiveData<UserModel>()
+    private var videoList = mutableListOf<VideoModel>()
+    private var videoModelList = mutableListOf<VideoModel>()
     private val storage = Storage()
 
 
-    private var sortInfo = MutableLiveData(
-        SortInfo(SortColumn.TITLE, true))
-
-    // Function to update user data (call from your activity)
-
     private fun createUserMeta(name: String, email: String, uuid : String) {
-        val currentUser = CurrentAuthUser
-        var userMeta = UserMeta(
-            ownerName = currentUser.name,
-            ownerUid = currentUser.uid,
+        var userModel = UserModel(
+            userName = name,
             uuid = uuid,
+            email = email,
         )
-
-        Log.d("user", currentUser.name)
-        Log.d("user", currentUser.uid)
-        Log.d("user", uuid)
-        dbHelp.createUserMeta(userMeta) {
-            userMetaLocal.postValue(it)
+        dbHelp.createUserMeta(userModel) {
+            this.currentUser.postValue(it)
         }
 
     }
@@ -80,51 +64,56 @@ class UserProfileViewModel : ViewModel() {
         createUserMeta(name,email,uid)
     }
 
-    fun updateUserMetaQuote(quotes:String){
-        userMetaLocal.value?.quotes = quotes
-        var uid = userMetaLocal.value?.ownerUid
+    fun updateCurrentUserQuote(quotes:String){
+        currentUser.value?.quotes = quotes
+        var uid = currentUser.value?.uuid
         dbHelp.updateUserMetaQuotes(quotes,uid.toString())
     }
 
-    fun updateUserMetaUserName(name:String){
-        userMetaLocal.value?.ownerName = name
-        var uid = userMetaLocal.value?.ownerUid
+    fun updateCurrentUserName(name:String){
+        currentUser.value?.userName = name
+        var uid = currentUser.value?.uuid
         dbHelp.updateUserMetaName(name,uid.toString())
     }
 
-    fun observeUserMeta(): LiveData<UserMeta>{
-        return userMetaLocal
+    fun observeUserMeta(): LiveData<UserModel>{
+        return currentUser
     }
 
-    fun getUserMeta(): UserMeta{
-        return userMetaLocal.value!!
+    fun getUserMeta(): UserModel {
+        return currentUser.value!!
     }
 
-    fun setUserMeta(user: UserMeta){
-        userMetaLocal.postValue(user)
+    fun setUserMeta(user: UserModel){
+        currentUser.postValue(user)
     }
 
-    fun uploadVideos(uri: Uri){
-           storage.uploadVideoStorage(uri, userMetaLocal.value?.uuid!!,
-               Timestamp.now().seconds.toString()
-           ) {
-               dbHelp.fetchUserMeta(userMetaLocal.value!!.uuid) {
-                   setUserMeta(it)
-               }
+    fun uploadVideos(uri: Uri, uuid:String){
+        val videoModel = VideoModel(
+            videoId =  uuid + "_" +Timestamp.now().seconds.toString(),
+            title = "",
+            url = "",
+            uuid = uuid,
+            createdTime =  Timestamp.now())
+
+
+        storage.uploadVideoStorage(uri,videoModel
+        ) {
+           dbHelp.fetchUserMeta(uuid) {
+               Log.d("set_user_data", "got data")
+               setUserMeta(it)
+           }
         }
+
     }
 
-    fun getVideoList(): List<VideoMeta>{
-        return videoList
-    }
+    fun fetchVideos( uuid:String,resultListener: (List<VideoModel>)->Unit){
 
-    fun fetchVideos( resultListener: (List<VideoMeta>)->Unit){
-
-        storage.getVideos(userMetaLocal.value?.uuid!!){
+        storage.getVideos(uuid){
 
             for( ref in it){
                 ref.downloadUrl.addOnSuccessListener {
-                    var video = VideoMeta(
+                    var video = VideoModel(
                         videoId = ref.name,
                         url = it.toString()
                     )

@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import android.widget.ImageView
 import com.example.instafameproj.ViewModelDBHelper
+import com.example.instafameproj.ui.Model.VideoModel
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.StorageReference
@@ -15,22 +16,17 @@ class Storage {
     private val photoStorage: StorageReference =
         FirebaseStorage.getInstance().reference.child("videos")
     private val dbhelpter = ViewModelDBHelper()
+    companion object{
+        var URL = ""
+    }
     // https://firebase.google.com/docs/storage/android/upload-files#upload_from_a_local_file
-    fun uploadVideoStorage(uri: Uri, uuid: String, timeStamp: String, uploadSuccess:(Long)->Unit) {
-
-        //val file = Uri.fromFile(localFile)
-        val uuidRef = photoStorage.child(uuid).child("${timeStamp}.mp4")
+    fun uploadVideoStorage(uri:Uri, videoModel: VideoModel,  uploadSuccess:(Long)->Unit) {
+        val uuidRef = photoStorage.child(videoModel.uuid).child("${videoModel.createdTime.seconds}.mp4")
         val metadata = StorageMetadata.Builder()
             .setContentType("video/mp4")
             .build()
+
         val uploadTask = uuidRef.putFile(uri, metadata)
-            .addOnSuccessListener {
-                uuidRef.downloadUrl.addOnSuccessListener {downloadUrl->
-                    //video model store in firebase firestore
-                    Log.d("post_video" ,downloadUrl.toString())
-                    dbhelpter.updateUserVideoUrl(downloadUrl.toString(),uuid)
-                }
-            }
 
         // Register observers to listen for when the download is done or if it fails
         uploadTask
@@ -46,8 +42,28 @@ class Storage {
             }
             .addOnSuccessListener {
                 // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-                val sizeBytes = it.metadata?.sizeBytes ?: -1
-                uploadSuccess(sizeBytes)
+
+                uuidRef.downloadUrl.addOnSuccessListener {downloadUrl->
+                    Log.d("post_video" ,downloadUrl.toString())
+                    URL = downloadUrl.toString()
+
+                    val sizeBytes = it.metadata?.sizeBytes ?: -1
+                    dbhelpter.updateUserVideoUrl(URL.toString(),videoModel.uuid){
+                        uploadSuccess(sizeBytes)
+                    }
+
+                    videoModel.url = URL.toString()
+                    dbhelpter.createVideoMeta(videoModel){
+                        Log.d("create_video" ,URL.toString())
+                        uploadSuccess(sizeBytes)
+                    }
+
+                }
+
+
+
+
+
                 /*
                 if(localFile.delete()) {
                     Log.d(javaClass.simpleName, "Upload succeeded $uuid, file deleted")

@@ -1,6 +1,5 @@
 package com.example.instafameproj.ui.userprofile
 
-import android.graphics.drawable.GradientDrawable.Orientation
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -9,42 +8,30 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.instafameproj.MainActivity
 import com.example.instafameproj.R
-import com.example.instafameproj.VideoMeta
+import com.example.instafameproj.ui.Model.VideoModel
 import com.example.instafameproj.databinding.ActivityMainBinding
 import com.example.instafameproj.databinding.FragmentUserBinding
-import com.google.android.exoplayer2.ExoPlayer
 
 class UserProfileFragment : Fragment() {
 
     private var _binding: FragmentUserBinding? = null
     private val viewModel: UserProfileViewModel by activityViewModels()
     private lateinit var mainBinding: ActivityMainBinding
-    private lateinit var adapter: VideosAdapter
+    private lateinit var adapter: UserVideosListAdapter
     private var test = 0
     private val binding get() = _binding!!
-    private var videodata = MutableLiveData<List<VideoMeta>>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val userProfileViewModel =
-            ViewModelProvider(this).get(UserProfileViewModel::class.java)
+
         _binding = FragmentUserBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-
-        return root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,70 +48,80 @@ class UserProfileFragment : Fragment() {
             if(test == 0){
                 val resUri =
                     Uri.parse(("android.resource://" +  mainActivity.packageName.toString() + "/" + R.raw.test1))
-                viewModel.uploadVideos(resUri)
+                viewModel.uploadVideos(resUri,viewModel.getUserMeta().uuid)
                 test++
             }
             else if (test == 1) {
                 val resUri =
                     Uri.parse(("android.resource://" + mainActivity.packageName.toString() + "/" + R.raw.test2))
-                viewModel.uploadVideos(resUri)
+                viewModel.uploadVideos(resUri,viewModel.getUserMeta().uuid)
                 test++
             }
             else if(test == 2){
                 val resUri =
                     Uri.parse(("android.resource://" + mainActivity.packageName.toString() + "/" + R.raw.test3))
-                viewModel.uploadVideos(resUri)
+                viewModel.uploadVideos(resUri,viewModel.getUserMeta().uuid)
                 test++
             }
             else if(test == 3){
                 val resUri =
                     Uri.parse(("android.resource://" + mainActivity.packageName.toString() + "/" + R.raw.test4))
-                viewModel.uploadVideos(resUri)
+                viewModel.uploadVideos(resUri,viewModel.getUserMeta().uuid)
                 test++
             }
             else if(test == 4){
                 val resUri =
                     Uri.parse(("android.resource://" + mainActivity.packageName.toString() + "/" + R.raw.test5))
-                viewModel.uploadVideos(resUri)
+                viewModel.uploadVideos(resUri,viewModel.getUserMeta().uuid)
                 test++
             }
             else if(test == 5){
                 val resUri =
                     Uri.parse(("android.resource://" + mainActivity.packageName.toString() + "/" + R.raw.test6))
-                viewModel.uploadVideos(resUri)
+                viewModel.uploadVideos(resUri,viewModel.getUserMeta().uuid)
                 test++
             }
 
         }
 
-        binding.test1.setOnClickListener {
-            viewModel.fetchVideos(){
-                adapter.submitList(it)
-            }
-        }
-
         viewModel.observeUserName().observe(viewLifecycleOwner){
             binding.userNameTV.text = it
-            viewModel.updateUserMetaUserName(it)
+            viewModel.updateCurrentUserName(it)
         }
 
         viewModel.observeQuotes().observe(viewLifecycleOwner){
             binding.quotes.text = it
-            viewModel.updateUserMetaQuote(it)
+            viewModel.updateCurrentUserQuote(it)
         }
 
         viewModel.observeUserMeta().observe(viewLifecycleOwner){
             viewModel.setQuotes(it.quotes)
-            viewModel.setUserName(it.ownerName)
+            viewModel.setUserName(it.userName)
+/*
+            viewModel.fetchVideos(it.uuid){
+                Log.d("video is fetch", "fsdfds")
+                adapter.submitList(it)
+            }
+
+ */
+
+            val list = mutableListOf<VideoModel>()
+            for(url in it.videoUrl){
+                val videoData = VideoModel(
+                    url = url
+                )
+                list.add(videoData)
+            }
+            adapter.submitList(list)
+
+
         }
         initRecyclerViewGrid()
-        //adapter.submitList(viewModel.getUserMeta())
-
     }
     private fun initRecyclerViewGrid() {
         // Define a layout for RecyclerView
         // Initialize a new instance of RecyclerView Adapter instance
-        adapter = VideosAdapter(viewModel){
+        adapter = UserVideosListAdapter(viewModel){
 
         }
         binding.videosRV.adapter = adapter
@@ -141,6 +138,5 @@ class UserProfileFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 
 }
