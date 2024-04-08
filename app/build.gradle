@@ -47,7 +47,6 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.7.7'
 
     implementation libs.firebase.auth
-    implementation libs.androidx.preference
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
