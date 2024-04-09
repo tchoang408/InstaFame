@@ -10,10 +10,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.instafameproj.R
 import com.example.instafameproj.User
-import com.example.instafameproj.ui.Model.VideoModel
 import com.example.instafameproj.ViewModelDBHelper
 import com.example.instafameproj.invalidUser
 import com.example.instafameproj.ui.Model.UserModel
+import com.example.instafameproj.ui.Model.VideoModel
 import com.example.instafameproj.ui.dashboard.Storage
 import com.google.firebase.Timestamp
 
@@ -21,7 +21,7 @@ import com.google.firebase.Timestamp
 class UserProfileViewModel : ViewModel() {
 
     private var CurrentAuthUser = invalidUser
-    private var UserName = MutableLiveData<String>()
+    private var userName = MutableLiveData<String>()
     private var Quotes = MutableLiveData<String>()
     private val dbHelp = ViewModelDBHelper()
     private var currentUser = MutableLiveData<UserModel>()
@@ -32,7 +32,7 @@ class UserProfileViewModel : ViewModel() {
 
     private fun createUserMeta(name: String, email: String, uuid : String) {
         var userModel = UserModel(
-            userName = name,
+            ownerName = name,
             uuid = uuid,
             email = email,
         )
@@ -49,7 +49,7 @@ class UserProfileViewModel : ViewModel() {
     }
 
     fun setUserName(name: String){
-        UserName.postValue(name)
+        userName.postValue(name)
     }
     fun setProfilePic(pic: String, view:ImageView){
        // UserName.postValue(name)
@@ -65,7 +65,7 @@ class UserProfileViewModel : ViewModel() {
     }
 
     fun observeUserName(): LiveData<String>{
-        return UserName
+        return userName
     }
 
     fun observeQuotes(): LiveData<String>{
@@ -77,18 +77,20 @@ class UserProfileViewModel : ViewModel() {
     }
 
     fun updateCurrentUserQuote(quotes:String){
+
         currentUser.value?.quotes = quotes
         var uid = currentUser.value?.uuid
         dbHelp.updateUserMetaQuotes(quotes,uid.toString())
     }
 
     fun updateCurrentUserName(name:String){
-        currentUser.value?.userName = name
+        currentUser.value?.ownerName = name
         var uid = currentUser.value?.uuid
         dbHelp.updateUserMetaName(name,uid.toString())
     }
 
     fun observeUserMeta(): LiveData<UserModel>{
+        Log.d("userMeta", "updated")
         return currentUser
     }
 

@@ -7,15 +7,17 @@ import android.view.LayoutInflater
 import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.VideoView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.instafameproj.R
-import com.example.instafameproj.ui.Model.VideoModel
 import com.example.instafameproj.databinding.UserVideoRowBinding
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
+import com.example.instafameproj.ui.Model.VideoModel
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ui.PlayerView
 
 
 class UserVideosListAdapter(private val viewModel: UserProfileViewModel,
@@ -30,22 +32,20 @@ class UserVideosListAdapter(private val viewModel: UserProfileViewModel,
         UserVideosListAdapter.ViewHolder>(Diff())
 {
     private lateinit var context: Context
-
+    private lateinit var player: Player
     inner class ViewHolder(private val videoRowBinding : UserVideoRowBinding)
         : RecyclerView.ViewHolder(videoRowBinding.root) {
         init {
             itemView.setOnClickListener {
 
-                val playerView = it.findViewById<com.google.android.exoplayer2.ui.PlayerView>(R.id.videoView1)
-                val player = playerView.player
-                if( player != null){
-                    if(player.isPlaying){
-                        player.pause()
+                val playerView = it.findViewById<VideoView>(R.id.videoView1)
+
+                    if(playerView.isPlaying){
+                        playerView.pause()
+                    } else{
+                        Log.d("item_click", "player is click")
+                        playerView.start()
                     }
-                    else{
-                        player.play()
-                    }
-                }
             }
         }
 
@@ -54,35 +54,58 @@ class UserVideosListAdapter(private val viewModel: UserProfileViewModel,
 
             val uri1 = Uri.parse(viewModel.getUserMeta().videoUrl[position])
             Log.d("video_url", uri1.toString())
-            /*
+
             Log.d("url", viewModel.getUserMeta().videoUrl[position])
             rowBinding.videoView1.setVideoPath(viewModel.getUserMeta().videoUrl[position])
             rowBinding.videoView1.seekTo(1)
-            */
+            val videoView = holder.itemView.findViewById<VideoView>(R.id.videoView1)
 
+// Set aspect ratio (width:height) - For example, 16:9
+            val aspectRatioWidth = 16
+            val aspectRatioHeight = 9
 
-            val player = ExoPlayer.Builder(context).build()
+// Calculate the height based on the desired aspect ratio
+
+// Set layout parameters
+            val playerView = holder.itemView.findViewById<CardView>(R.id.cardV)
+
+            val layoutParams = videoView.layoutParams
+            layoutParams.width = 1000
+            layoutParams.height = 400
+            videoView.layoutParams = layoutParams
+            /*
+            val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
+                context, Util.getUserAgent(context, "RecyclerView VideoPlayer")
+            )
+            val videoSource: MediaDataSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(uri1)
+*/
+            /*
+            player = ExoPlayer.Builder(context).build()
 
             rowBinding.videoView1.player = player
             val mediaItem: MediaItem = MediaItem.fromUri(uri1)
             player.setMediaItem(mediaItem)
 
-            player.prepare()
+            //player.prepare(videoSource)
             player.playWhenReady = false
-
-
+            */
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val rowBinding = UserVideoRowBinding.inflate(LayoutInflater.from(parent.context),
             parent, false)
         context =parent.context
+
         return ViewHolder(rowBinding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         holder.bind(holder, position)
     }
+
+
     class Diff : DiffUtil.ItemCallback<VideoModel>() {
         // Item identity
         override fun areItemsTheSame(oldItem: VideoModel, newItem: VideoModel): Boolean {
@@ -98,5 +121,15 @@ class UserVideosListAdapter(private val viewModel: UserProfileViewModel,
         }
     }
 
+    private fun setVideoThumbnail(playerView: PlayerView, thumbnailImage: ImageView ) {
+        val textureView = playerView.videoSurfaceView as TextureView
+        val bitmap = textureView.bitmap
+        thumbnailImage.setImageBitmap(bitmap)
+        thumbnailImage.visibility = View.VISIBLE
+    }
+
+    fun releasePlayer(){
+       // player.release()
+    }
 
 }

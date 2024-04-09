@@ -16,7 +16,7 @@ class ViewModelDBHelper {
         userModel: UserModel,
         resultListener: (UserModel)->Unit
     ) {
-        var a = listOf(("uuid"))
+        var a = listOf(("uuid"), ("email"))
         db.collection(userRootCollection).document(userModel.uuid)
             .set(userModel, SetOptions.mergeFields(a))
             .addOnSuccessListener {

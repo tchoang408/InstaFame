@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.instafameproj.MainActivity
 import com.example.instafameproj.databinding.FragmentHomeBinding
 import com.example.instafameproj.ui.Model.VideoModel
@@ -54,10 +53,13 @@ class HomeFragment : Fragment() {
             .setQuery(query, VideoModel::class.java)
             .build()
         adapter = HomeVideoListAdapter(options)
+        binding.viewPager.adapter = adapter
+
+        /*
         binding.homeRV.adapter = adapter
         val layoutManager = LinearLayoutManager(binding.homeRV.context)
         binding.homeRV.layoutManager = layoutManager
-
+        */
     }
 
     override fun onStart() {

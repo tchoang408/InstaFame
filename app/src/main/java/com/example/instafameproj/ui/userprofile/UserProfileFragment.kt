@@ -1,6 +1,5 @@
 package com.example.instafameproj.ui.userprofile
 
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -8,15 +7,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -25,10 +21,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.instafameproj.MainActivity
 import com.example.instafameproj.R
-import com.example.instafameproj.ui.Model.VideoModel
-import com.example.instafameproj.databinding.ActivityMainBinding
 import com.example.instafameproj.databinding.FragmentUserBinding
-import kotlin.math.log
+import com.example.instafameproj.ui.Model.VideoModel
 
 class UserProfileFragment : Fragment() {
 
@@ -65,7 +59,7 @@ class UserProfileFragment : Fragment() {
         mainActivity = (requireActivity() as MainActivity)
         context = requireContext()
 
-        binding.userNameTV.text = viewModel.getCurrentAuthUser().name
+       // binding.userNameTV.text = viewModel.getCurrentAuthUser().name
 
         binding.editProfileBT.setOnClickListener {
             findNavController().navigate(R.id.action_toEditProfile)
@@ -128,8 +122,10 @@ class UserProfileFragment : Fragment() {
         }
 
         viewModel.observeUserMeta().observe(viewLifecycleOwner){
+            Log.d("createUserMeta", "Create user meta")
+
             viewModel.setQuotes(it.quotes)
-            viewModel.setUserName(it.userName)
+            viewModel.setUserName(it.ownerName)
             viewModel.setProfilePic(it.profilePic, binding.userProfilePic)
             val list = mutableListOf<VideoModel>()
             for(url in it.videoUrl){
@@ -193,6 +189,10 @@ class UserProfileFragment : Fragment() {
         getContent.launch("image/*")
 
 
+    }
+    override fun onStop() {
+        super.onStop()
+        adapter.releasePlayer()
     }
 
 }
