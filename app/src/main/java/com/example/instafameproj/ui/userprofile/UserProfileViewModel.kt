@@ -2,9 +2,13 @@ package com.example.instafameproj.ui.userprofile
 
 import android.net.Uri
 import android.util.Log
+import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.example.instafameproj.R
 import com.example.instafameproj.User
 import com.example.instafameproj.ui.Model.VideoModel
 import com.example.instafameproj.ViewModelDBHelper
@@ -47,7 +51,15 @@ class UserProfileViewModel : ViewModel() {
     fun setUserName(name: String){
         UserName.postValue(name)
     }
-
+    fun setProfilePic(pic: String, view:ImageView){
+       // UserName.postValue(name)
+        Glide.with(view).load(pic)
+            .circleCrop()
+            .apply(
+                RequestOptions().placeholder(R.drawable.icon_profile)
+            )
+            .into(view)
+    }
     fun setQuotes(quotes: String){
         Quotes.postValue(quotes)
     }
@@ -124,7 +136,16 @@ class UserProfileViewModel : ViewModel() {
             }
         }
     }
+    fun uploadPics(uri: Uri, uuid:String){
+        storage.uploadProfilePicsStorage(uri,uuid
+        ) {
+            dbHelp.fetchUserMeta(uuid) {
+                Log.d("set_user_data", "got data")
+                setUserMeta(it)
+            }
+        }
 
+    }
     fun uploadSuccess(sizeBytes: Long){
         Log.d("upload_Success", sizeBytes.toString())
 

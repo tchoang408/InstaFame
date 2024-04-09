@@ -1,12 +1,26 @@
 package com.example.instafameproj.ui.userprofile
 
+import android.content.ContentResolver
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.instafameproj.MainActivity
@@ -14,16 +28,27 @@ import com.example.instafameproj.R
 import com.example.instafameproj.ui.Model.VideoModel
 import com.example.instafameproj.databinding.ActivityMainBinding
 import com.example.instafameproj.databinding.FragmentUserBinding
+import kotlin.math.log
 
 class UserProfileFragment : Fragment() {
 
     private var _binding: FragmentUserBinding? = null
     private val viewModel: UserProfileViewModel by activityViewModels()
-    private lateinit var mainBinding: ActivityMainBinding
+    private lateinit var mainActivity: FragmentActivity
     private lateinit var adapter: UserVideosListAdapter
     private var test = 0
     private val binding get() = _binding!!
+    lateinit var photoLauncher: ActivityResultLauncher<Intent>
+    private lateinit var context:Context
 
+    private val getContent = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            // Photo selected, handle the Uri accordingly
+            viewModel.uploadPics(uri,viewModel.getUserMeta().uuid)
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,11 +62,19 @@ class UserProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(javaClass.simpleName, "onViewCreated")
-        val mainActivity = (requireActivity() as MainActivity)
+        mainActivity = (requireActivity() as MainActivity)
+        context = requireContext()
+
         binding.userNameTV.text = viewModel.getCurrentAuthUser().name
 
         binding.editProfileBT.setOnClickListener {
             findNavController().navigate(R.id.action_toEditProfile)
+        }
+
+        binding.userProfilePic.setOnClickListener {
+            checkPermissionAndPickPhoto()
+            Log.d("upload_picture", "success")
+
         }
 
         binding.test.setOnClickListener {
@@ -97,14 +130,7 @@ class UserProfileFragment : Fragment() {
         viewModel.observeUserMeta().observe(viewLifecycleOwner){
             viewModel.setQuotes(it.quotes)
             viewModel.setUserName(it.userName)
-/*
-            viewModel.fetchVideos(it.uuid){
-                Log.d("video is fetch", "fsdfds")
-                adapter.submitList(it)
-            }
-
- */
-
+            viewModel.setProfilePic(it.profilePic, binding.userProfilePic)
             val list = mutableListOf<VideoModel>()
             for(url in it.videoUrl){
                 val videoData = VideoModel(
@@ -137,6 +163,36 @@ class UserProfileFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun checkPermissionAndPickPhoto(){
+        var readExternalPhoto : String = ""
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            readExternalPhoto = android.Manifest.permission.READ_MEDIA_IMAGES
+        }else{
+            readExternalPhoto = android.Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+        if(ContextCompat.checkSelfPermission(context,readExternalPhoto)== PackageManager.PERMISSION_GRANTED){
+            //we have permission
+            openPhotoPicker()
+            Log.d("permission_granted", "granted")
+        }else{
+            ActivityCompat.requestPermissions(
+                mainActivity,
+                arrayOf(readExternalPhoto),
+                100
+            )
+        }
+    }
+
+    private fun  openPhotoPicker(){
+
+        // Registers a photo picker activity launcher in single-select mode.
+        Environment.getExternalStorageDirectory()
+        Log.d("dire", Environment.getExternalStorageDirectory().toString())
+        getContent.launch("image/*")
+
+
     }
 
 }

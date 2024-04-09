@@ -78,7 +78,20 @@ class ViewModelDBHelper {
             .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }
 
     }
-    fun fetchVideoMeta(
+
+    fun updateUserPicsUrl(url: String,uid:String, resultListener: () -> Unit) {
+        val userRef = db.collection(userRootCollection).document(uid)
+        Log.d("videoUrl", uid.toString())
+        userRef
+            .update("profilePic", url)
+            .addOnSuccessListener {
+                Log.d("User_Update", "DocumentSnapshot successfully updated!")
+                resultListener()
+            }
+            .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }
+
+    }
+        fun fetchVideoMeta(
         uuid: String,
         resultListener: (VideoModel) -> Unit
     ) {
