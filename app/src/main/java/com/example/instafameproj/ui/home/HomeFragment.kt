@@ -11,6 +11,7 @@ import com.example.instafameproj.databinding.FragmentHomeBinding
 import com.example.instafameproj.ui.Model.VideoModel
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 class HomeFragment : Fragment() {
 
@@ -48,10 +49,12 @@ class HomeFragment : Fragment() {
     private fun setupViewPager(){
         val db: FirebaseFirestore = FirebaseFirestore.getInstance()
         val query = db.collection("Videos")
+            .orderBy("createdTime", Query.Direction.DESCENDING).orderBy("title")
 
         val options = FirestoreRecyclerOptions.Builder<VideoModel>()
             .setQuery(query, VideoModel::class.java)
             .build()
+
         adapter = HomeVideoListAdapter(options)
         binding.viewPager.adapter = adapter
 

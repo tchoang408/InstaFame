@@ -1,10 +1,10 @@
-package com.example.instafameproj
+package com.example.instafameproj.ui
 
 import android.util.Log
-import com.google.firebase.firestore.FirebaseFirestore
 import com.example.instafameproj.ui.Model.UserModel
 import com.example.instafameproj.ui.Model.VideoModel
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 
 class ViewModelDBHelper {

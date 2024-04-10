@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.VideoView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
@@ -16,7 +15,6 @@ import com.example.instafameproj.ui.Model.UserModel
 import com.example.instafameproj.ui.Model.VideoModel
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
@@ -28,9 +26,6 @@ class HomeVideoListAdapter(
 ) : FirestoreRecyclerAdapter<VideoModel,HomeVideoListAdapter.VideoViewHolder>(options)  {
     private lateinit var context: Context
 
-    private lateinit var listVideoView: MutableList<VideoView>
-
-    private lateinit var player: ExoPlayer
     inner class VideoViewHolder(private val binding : HomeVideoRowBinding) : RecyclerView.ViewHolder(binding.root),
         Player.Listener {
         init {
@@ -66,6 +61,7 @@ class HomeVideoListAdapter(
                     val userModel = it?.toObject(UserModel::class.java)
                     userModel?.apply {
                         binding.usernameView.text = ownerName
+                        Log.d("Title_fsdfds", videoModel.title)
 
                         //bind profilepic
 
@@ -77,8 +73,7 @@ class HomeVideoListAdapter(
                             .into(binding.profileIcon)
                     }
 
-                    //binding.captionView.text = videoModel.title
-                    binding.captionView.text = "Testing my caption"
+                    binding.captionView.text = videoModel.title
                     binding.progressBar.visibility = View.GONE
 
                 }
@@ -90,6 +85,9 @@ class HomeVideoListAdapter(
                     it.start()
                     it.isLooping = true
                     Log.d("is binding", position.toString())
+                    Log.d("Title", videoModel.title)
+
+
                 }
                 setOnCompletionListener{
                     Log.d("complete", "song complete")

@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import com.example.instafameproj.databinding.ActivityMainBinding
+import com.example.instafameproj.ui.AuthUser
 import com.example.instafameproj.ui.userprofile.UserProfileViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -46,11 +47,15 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_dashboard -> {
-                    navController.navigate(R.id.navigation_dashboard)
+                    navController.navigate(R.id.action_toUserDashBoard)
                     true
                 }
                 R.id.navigation_home -> {
                     navController.navigate(R.id.action_toUserHome)
+                    true
+                }
+                R.id.Logout -> {
+                    authUser.logout()
                     true
                 }
                 else -> false

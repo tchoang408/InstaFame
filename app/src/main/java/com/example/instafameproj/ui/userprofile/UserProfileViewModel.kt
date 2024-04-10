@@ -9,12 +9,12 @@ import androidx.lifecycle.ViewModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.instafameproj.R
-import com.example.instafameproj.User
-import com.example.instafameproj.ViewModelDBHelper
-import com.example.instafameproj.invalidUser
 import com.example.instafameproj.ui.Model.UserModel
 import com.example.instafameproj.ui.Model.VideoModel
-import com.example.instafameproj.ui.dashboard.Storage
+import com.example.instafameproj.ui.Storage
+import com.example.instafameproj.ui.User
+import com.example.instafameproj.ui.ViewModelDBHelper
+import com.example.instafameproj.ui.invalidUser
 import com.google.firebase.Timestamp
 
 
@@ -44,7 +44,7 @@ class UserProfileViewModel : ViewModel() {
     fun setCurrentAuthUser(user: User) {
         CurrentAuthUser = user
     }
-    fun getCurrentAuthUser(): User{
+    fun getCurrentAuthUser(): User {
         return CurrentAuthUser
     }
 

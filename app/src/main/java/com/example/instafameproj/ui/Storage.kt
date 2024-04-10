@@ -1,9 +1,8 @@
-package com.example.instafameproj.ui.dashboard
+package com.example.instafameproj.ui
 
 import android.net.Uri
 import android.util.Log
 import android.widget.ImageView
-import com.example.instafameproj.ViewModelDBHelper
 import com.example.instafameproj.ui.Model.VideoModel
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
@@ -56,7 +55,7 @@ class Storage {
 
                     videoModel.url = URL.toString()
                     dbhelpter.createVideoMeta(videoModel){
-                        Log.d("create_video" ,URL.toString())
+                        Log.d("create_video" , URL.toString())
                         uploadSuccess(sizeBytes)
                     }
 
