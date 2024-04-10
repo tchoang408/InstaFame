@@ -39,10 +39,15 @@
         android:layout_marginLeft="5dp"
         >
         <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
             android:id="@+id/profile_icon"
-            android:src="@color/black"/>
+            android:elevation="10dp"
+            android:background="@drawable/icon_profile"
+            android:scaleType="fitCenter"
+            android:alpha=".70"
+            />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -54,16 +59,21 @@
                 tools:text="captain"
                 android:textColor="@color/white"
                 android:id="@+id/username_view"
-                android:textSize="24sp"
-                android:textStyle="bold"/>
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:alpha=".9"
+
+                />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="Hey this is first video"
                 android:textColor="@color/white"
                 android:id="@+id/caption_view"
-                android:textSize="16sp"
-                android:textStyle="bold"/>
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:alpha=".9"
+                />
 
 
         </LinearLayout>
