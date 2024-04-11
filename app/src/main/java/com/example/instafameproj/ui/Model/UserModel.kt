@@ -3,7 +3,7 @@ package com.example.instafameproj.ui.Model
 // Firebase insists we have a no argument constructor
 data class UserModel(
     // Auth information
-    var userName: String = "",
+    var ownerName: String = "",
     var email : String ="",
     var uuid: String = "",
     var quotes: String = "",

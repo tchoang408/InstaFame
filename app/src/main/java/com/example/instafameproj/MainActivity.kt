@@ -3,38 +3,32 @@ package com.example.instafameproj
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import androidx.activity.viewModels
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.MenuProvider
+import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.FragmentNavigator
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
 import com.example.instafameproj.databinding.ActivityMainBinding
-import com.example.instafameproj.ui.userprofile.UserProfileFragment
+import com.example.instafameproj.ui.AuthUser
 import com.example.instafameproj.ui.userprofile.UserProfileViewModel
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var authUser : AuthUser
     private val viewModel: UserProfileViewModel by viewModels()
-
+    private lateinit var navController: NavController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initMenu()
         val navView: BottomNavigationView = binding.navView
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        navController = findNavController(R.id.nav_host_fragment_activity_main)
+/*
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
@@ -44,26 +38,40 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-    }
+*/
 
-    private fun initMenu() {
-        addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                // Inflate the menu; this adds items to the action bar if it is present.
-                menuInflater.inflate(R.menu.menu_main, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.menuLogout -> {
-                        authUser.logout()
-                        true
-                    }
-                    else -> false
+        navView.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.user_profile -> {
+                    navController.navigate(R.id.action_toUserProfile)
+                    true
                 }
+                R.id.navigation_dashboard -> {
+                    navController.navigate(R.id.action_toUserDashBoard)
+                    true
+                }
+                R.id.navigation_home -> {
+                    navController.navigate(R.id.action_toUserHome)
+                    true
+                }
+                R.id.Logout -> {
+                    authUser.logout()
+                    true
+                }
+                else -> false
             }
-        })
+        }
+      //  initMenu()
+
     }
+    private fun NavController.safeNavigate(direction: NavDirections) {
+        currentDestination?.
+        getAction(direction.actionId)?.
+        run {
+            navigate(direction)
+        }
+    }
+
 
     override fun onStart() {
         super.onStart()

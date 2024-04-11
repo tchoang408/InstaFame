@@ -1,10 +1,10 @@
-package com.example.instafameproj
+package com.example.instafameproj.ui
 
 import android.util.Log
-import com.google.firebase.firestore.FirebaseFirestore
 import com.example.instafameproj.ui.Model.UserModel
 import com.example.instafameproj.ui.Model.VideoModel
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 
 class ViewModelDBHelper {
@@ -16,7 +16,7 @@ class ViewModelDBHelper {
         userModel: UserModel,
         resultListener: (UserModel)->Unit
     ) {
-        var a = listOf(("uuid"))
+        var a = listOf(("uuid"), ("email"))
         db.collection(userRootCollection).document(userModel.uuid)
             .set(userModel, SetOptions.mergeFields(a))
             .addOnSuccessListener {
@@ -78,7 +78,20 @@ class ViewModelDBHelper {
             .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }
 
     }
-    fun fetchVideoMeta(
+
+    fun updateUserPicsUrl(url: String,uid:String, resultListener: () -> Unit) {
+        val userRef = db.collection(userRootCollection).document(uid)
+        Log.d("videoUrl", uid.toString())
+        userRef
+            .update("profilePic", url)
+            .addOnSuccessListener {
+                Log.d("User_Update", "DocumentSnapshot successfully updated!")
+                resultListener()
+            }
+            .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }
+
+    }
+        fun fetchVideoMeta(
         uuid: String,
         resultListener: (VideoModel) -> Unit
     ) {

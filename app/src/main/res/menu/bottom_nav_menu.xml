@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@drawable/baseline_home_24"
         android:title="@string/title_home"
         android:visible="true" />
 
     <item
         android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/outline_file_upload_24"
-        android:title="@string/title_dashboard"
+        android:icon="@drawable/baseline_add_a_photo_24"
+        android:title="Media"
         android:visible="true" />
 
     <item
@@ -19,4 +20,11 @@
         android:title="@string/title_notifications"
         android:visible="true"
     />
+
+    <item
+        android:id="@+id/Logout"
+        android:icon="@drawable/baseline_logout_24"
+        android:title="Logout"
+        android:visible="true"
+        />
 </menu>

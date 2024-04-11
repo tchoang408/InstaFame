@@ -32,5 +32,17 @@
         android:id="@+id/action_toEditProfile"
         app:destination="@+id/EditProfile"/>
 
+    <action
+        android:id="@+id/action_toUserProfile"
+        app:destination="@+id/user_profile"/>
+
+    <action
+        android:id="@+id/action_toUserHome"
+        app:destination="@+id/navigation_home"/>
+
+    <action
+        android:id="@+id/action_toUserDashBoard"
+        app:destination="@+id/navigation_dashboard"/>
+
 </navigation>
 
