@@ -131,13 +131,11 @@ class Storage {
         uploadTask
             .addOnFailureListener {
                 // Handle unsuccessful uploads
-                /*
-                if(localFile.delete()) {
+
                     Log.d(javaClass.simpleName, "Upload FAILED $uuid, file deleted")
-                } else {
+
                     Log.d(javaClass.simpleName, "Upload FAILED $uuid, file delete FAILED")
-                }
-                 */
+
             }
             .addOnSuccessListener {
                 // taskSnapshot.metadata contains file metadata such as size, content-type, etc.

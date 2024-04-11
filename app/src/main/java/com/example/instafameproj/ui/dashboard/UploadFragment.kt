@@ -19,9 +19,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
+import com.bumptech.glide.Glide
 import com.example.instafameproj.MainActivity
 import com.example.instafameproj.databinding.FragmentUploadBinding
-import com.example.instafameproj.ui.MediaUpload
 import com.example.instafameproj.ui.userprofile.UserProfileViewModel
 
 class UploadFragment : Fragment() {
@@ -30,7 +30,6 @@ class UploadFragment : Fragment() {
     private val viewModel: UserProfileViewModel by activityViewModels()
     private var selectedVideoUri : Uri? =null
 
-    lateinit var mediaUpload: MediaUpload
     lateinit var videoLauncher: ActivityResultLauncher<Intent>
 
     // This property is only valid between onCreateView and
@@ -57,6 +56,11 @@ class UploadFragment : Fragment() {
         context = requireContext()
 
         binding.uploadBt.setOnClickListener {
+            setInProgress(true)
+            uploadMediaVideo()
+        }
+
+        binding.postThumbnailView.setOnClickListener {
             checkPermissionAndOpenVideoPicker()
         }
 
@@ -64,13 +68,12 @@ class UploadFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // ...
-        mediaUpload = MediaUpload(requireActivity().activityResultRegistry, ::uploadMediaListener)
-        lifecycle.addObserver(mediaUpload)
+
         videoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
             if(result.resultCode == AppCompatActivity.RESULT_OK){
                 selectedVideoUri = result.data?.data
-                viewModel.uploadVideos(selectedVideoUri!!, viewModel.getUserMeta().uuid)
+                Glide.with(binding.postThumbnailView).load(selectedVideoUri).into(binding.postThumbnailView)
+
             }
         }
 
@@ -81,11 +84,22 @@ class UploadFragment : Fragment() {
         _binding = null
     }
 
-    private fun uploadMediaListener(uri: Uri){
+    private fun uploadMediaVideo(){
         //val resUri = Uri.parse(("android.resource://" +  mainActivity.packageName.toString() + "/" + R.raw.test1))
-        viewModel.uploadVideos(uri,viewModel.getUserMeta().uuid)
-    }
+        viewModel.uploadVideos(selectedVideoUri!!, viewModel.getUserMeta().uuid, binding.videoCaptionTv.text.toString()){
+            setInProgress(false)
+        }
 
+    }
+    private  fun setInProgress(inProgress : Boolean){
+        if(inProgress){
+            binding.progressBar.visibility = View.VISIBLE
+            binding.uploadBt.visibility = View.GONE
+        }else{
+            binding.progressBar.visibility = View.GONE
+            binding.uploadBt.visibility = View.VISIBLE
+        }
+    }
 
     private fun checkPermissionAndOpenVideoPicker(){
         var readExternalVideo : String = ""

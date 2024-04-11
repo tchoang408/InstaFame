@@ -10,7 +10,7 @@
 
     <item
         android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/baseline_logout_24"
+        android:icon="@drawable/baseline_add_a_photo_24"
         android:title="Media"
         android:visible="true" />
 

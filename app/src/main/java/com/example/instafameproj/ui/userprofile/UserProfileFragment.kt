@@ -1,12 +1,21 @@
 package com.example.instafameproj.ui.userprofile
 
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
@@ -14,7 +23,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.instafameproj.MainActivity
 import com.example.instafameproj.R
 import com.example.instafameproj.databinding.FragmentUserBinding
-import com.example.instafameproj.ui.MediaUpload
 import com.example.instafameproj.ui.Model.VideoModel
 
 class UserProfileFragment : Fragment() {
@@ -25,7 +33,7 @@ class UserProfileFragment : Fragment() {
     private lateinit var adapter: UserVideosListAdapter
     private val binding get() = _binding!!
     private lateinit var context:Context
-    lateinit var mediaUpload: MediaUpload
+    lateinit var photoLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,7 +58,7 @@ class UserProfileFragment : Fragment() {
         }
 
         binding.userProfilePic.setOnClickListener {
-            mediaUpload.checkPermissionAndPickPhoto(context,this)
+           checkPermissionAndPickPhoto()
 
         }
 
@@ -88,8 +96,12 @@ class UserProfileFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // ...
-        mediaUpload = MediaUpload(requireActivity().activityResultRegistry,::uploadMediaListener)
-        lifecycle.addObserver(mediaUpload)
+
+        photoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
+            if(result.resultCode == AppCompatActivity.RESULT_OK){
+                uploadMediaListener(result.data?.data!!)
+            }
+        }
     }
     private fun initRecyclerViewGrid() {
         // Define a layout for RecyclerView
@@ -106,10 +118,34 @@ class UserProfileFragment : Fragment() {
        // binding.videosRV.layoutManager = LinearLayoutManager(binding.videosRV.context)
     }
 
-    fun uploadMediaListener(uri: Uri){
+    private fun uploadMediaListener(uri: Uri){
         viewModel.uploadPics(uri,viewModel.getUserMeta().uuid)
     }
 
+    fun checkPermissionAndPickPhoto(){
+        var readExternalPhoto : String = ""
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            readExternalPhoto = android.Manifest.permission.READ_MEDIA_IMAGES
+        }else{
+            readExternalPhoto = android.Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+        if(ContextCompat.checkSelfPermission(this.context,readExternalPhoto)== PackageManager.PERMISSION_GRANTED){
+            //we have permission
+            openPhotoPicker()
+        }else{
+            ActivityCompat.requestPermissions(
+                this.mainActivity,
+                arrayOf(readExternalPhoto),
+                100
+            )
+        }
+    }
+
+    private fun openPhotoPicker(){
+        var intent = Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
+        photoLauncher.launch(intent)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

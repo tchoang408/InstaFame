@@ -102,10 +102,10 @@ class UserProfileViewModel : ViewModel() {
         currentUser.postValue(user)
     }
 
-    fun uploadVideos(uri: Uri, uuid:String){
+    fun uploadVideos(uri: Uri, uuid:String, title:String,resultListener: (Boolean)->Unit ){
         val videoModel = VideoModel(
             videoId =  uuid + "_" +Timestamp.now().seconds.toString(),
-            title = "",
+            title = title,
             url = "",
             uuid = uuid,
             createdTime =  Timestamp.now())
@@ -116,6 +116,7 @@ class UserProfileViewModel : ViewModel() {
            dbHelp.fetchUserMeta(uuid) {
                Log.d("set_user_data", "got data")
                setUserMeta(it)
+               resultListener(true)
            }
         }
 

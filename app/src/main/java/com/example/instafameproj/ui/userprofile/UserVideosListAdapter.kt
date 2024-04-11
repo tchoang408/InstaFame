@@ -9,10 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.VideoView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.instafameproj.R
 import com.example.instafameproj.databinding.UserVideoRowBinding
 import com.example.instafameproj.ui.Model.VideoModel
@@ -37,13 +37,19 @@ class UserVideosListAdapter(private val viewModel: UserProfileViewModel,
         : RecyclerView.ViewHolder(videoRowBinding.root) {
         init {
             itemView.setOnClickListener {
-
                 val playerView = it.findViewById<VideoView>(R.id.videoView1)
+                val img = itemView.findViewById<ImageView>(R.id.ThumbnailView)
 
-                    if(playerView.isPlaying){
+                if(playerView.isPlaying){
                         playerView.pause()
+                        img.visibility = View.VISIBLE
                     } else{
+                        val img = itemView.findViewById<ImageView>(R.id.ThumbnailView)
+                        img.visibility = View.GONE
                         Log.d("item_click", "player is click")
+                        val url = viewModel.getUserMeta().videoUrl[absoluteAdapterPosition]
+                        Log.d("item_click", url.toString())
+                        playerView.setVideoPath(url)
                         playerView.start()
                     }
             }
@@ -54,7 +60,8 @@ class UserVideosListAdapter(private val viewModel: UserProfileViewModel,
 
             val uri1 = Uri.parse(viewModel.getUserMeta().videoUrl[position])
             Log.d("video_url", uri1.toString())
-
+            Glide.with(rowBinding.ThumbnailView).load(uri1).into(rowBinding.ThumbnailView)
+/*
             Log.d("url", viewModel.getUserMeta().videoUrl[position])
             rowBinding.videoView1.setVideoPath(viewModel.getUserMeta().videoUrl[position])
             rowBinding.videoView1.seekTo(1)
@@ -73,6 +80,8 @@ class UserVideosListAdapter(private val viewModel: UserProfileViewModel,
             layoutParams.width = 1000
             layoutParams.height = 400
             videoView.layoutParams = layoutParams
+
+ */
             /*
             val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
                 context, Util.getUserAgent(context, "RecyclerView VideoPlayer")

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/black">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.userprofile.UserProfileFragment"
+    android:background="@color/black"
+    >
 
     <VideoView
         android:layout_width="match_parent"
@@ -20,6 +22,10 @@
         android:src="@drawable/icon_pause"
         android:id="@+id/pause_icon"
         android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         />
 
     <ProgressBar
@@ -27,6 +33,10 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:id="@+id/progress_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         />
 
     <LinearLayout
@@ -36,7 +46,10 @@
         android:id="@+id/user_detail_layout"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="70dp"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="10dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         >
         <ImageView
             android:layout_width="43dp"
@@ -45,7 +58,7 @@
             android:elevation="10dp"
             android:background="@drawable/icon_profile"
             android:scaleType="fitCenter"
-            android:alpha=".70"
+            android:alpha=".90"
             />
 
         <LinearLayout
@@ -62,7 +75,6 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:alpha=".9"
-
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -75,13 +87,12 @@
                 android:alpha=".9"
                 />
 
-
         </LinearLayout>
 
     </LinearLayout>
 
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
