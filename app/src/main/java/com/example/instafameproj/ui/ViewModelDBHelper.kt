@@ -67,10 +67,65 @@ class ViewModelDBHelper {
 
     }
     fun updateUserVideoUrl(url: String,uid:String, resultListener: () -> Unit){
+
         val userRef = db.collection(userRootCollection).document(uid)
         Log.d("videoUrl", uid.toString())
         userRef
             .update("videoUrl", FieldValue.arrayUnion(url))
+            .addOnSuccessListener{
+                Log.d("User_Update", "DocumentSnapshot successfully updated!")
+                resultListener()
+            }
+            .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }
+
+    }
+
+    fun deleteUserVideoUrl(url: String,uid:String, resultListener: () -> Unit){
+
+        val userRef = db.collection(userRootCollection).document(uid)
+        Log.d("videoUrl", uid.toString())
+        userRef
+            .update("videoUrl", FieldValue.arrayRemove(url))
+            .addOnSuccessListener{
+                Log.d("User_Update", "DocumentSnapshot successfully updated!")
+                resultListener()
+            }
+            .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }
+
+    }
+
+    fun deleteUserVideoId(videoId: String,uid:String, resultListener: () -> Unit){
+
+        val userRef = db.collection(userRootCollection).document(uid)
+        Log.d("videoId", uid.toString())
+        userRef
+            .update("videoId", FieldValue.arrayRemove(videoId))
+            .addOnSuccessListener{
+                Log.d("User_Update", "DocumentSnapshot successfully updated!")
+                resultListener()
+            }
+            .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }
+
+    }
+
+    fun deleteVideoVideoId(videoId: String, resultListener: () -> Unit){
+
+        val userRef = db.collection(videoRootCollection).document(videoId)
+        userRef
+            .delete()
+            .addOnSuccessListener{
+                Log.d("User_Update", "DocumentSnapshot successfully updated!")
+                resultListener()
+            }
+            .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }
+
+    }
+
+    fun updateUserVideoId(videoId: String,uid:String, resultListener: () -> Unit){
+        val userRef = db.collection(userRootCollection).document(uid)
+        Log.d("videoId", uid.toString())
+        userRef
+            .update("videoId", FieldValue.arrayUnion(videoId))
             .addOnSuccessListener{
                 Log.d("User_Update", "DocumentSnapshot successfully updated!")
                 resultListener()

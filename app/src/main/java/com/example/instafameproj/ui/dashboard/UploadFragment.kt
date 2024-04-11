@@ -58,6 +58,7 @@ class UploadFragment : Fragment() {
         binding.uploadBt.setOnClickListener {
             setInProgress(true)
             uploadMediaVideo()
+
         }
 
         binding.postThumbnailView.setOnClickListener {
@@ -85,8 +86,19 @@ class UploadFragment : Fragment() {
     }
 
     private fun uploadMediaVideo(){
-        //val resUri = Uri.parse(("android.resource://" +  mainActivity.packageName.toString() + "/" + R.raw.test1))
-        viewModel.uploadVideos(selectedVideoUri!!, viewModel.getUserMeta().uuid, binding.videoCaptionTv.text.toString()){
+        if(selectedVideoUri != null) {
+            //val resUri = Uri.parse(("android.resource://" +  mainActivity.packageName.toString() + "/" + R.raw.test1))
+            viewModel.uploadVideos(
+                selectedVideoUri!!,
+                viewModel.getUserMeta().uuid,
+                binding.videoCaptionTv.text.toString()
+            ) {
+                setInProgress(false)
+                binding.postThumbnailView.setImageResource(0);
+                selectedVideoUri = null
+            }
+        }
+        else{
             setInProgress(false)
         }
 

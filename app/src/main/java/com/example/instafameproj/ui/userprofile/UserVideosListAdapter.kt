@@ -16,7 +16,6 @@ import com.bumptech.glide.Glide
 import com.example.instafameproj.R
 import com.example.instafameproj.databinding.UserVideoRowBinding
 import com.example.instafameproj.ui.Model.VideoModel
-import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
 
 
@@ -32,7 +31,7 @@ class UserVideosListAdapter(private val viewModel: UserProfileViewModel,
         UserVideosListAdapter.ViewHolder>(Diff())
 {
     private lateinit var context: Context
-    private lateinit var player: Player
+
     inner class ViewHolder(private val videoRowBinding : UserVideoRowBinding)
         : RecyclerView.ViewHolder(videoRowBinding.root) {
         init {
@@ -53,6 +52,16 @@ class UserVideosListAdapter(private val viewModel: UserProfileViewModel,
                         playerView.start()
                     }
             }
+
+            itemView.setOnLongClickListener {
+                val v = getItem(absoluteAdapterPosition)
+                viewModel.DeleteVideos(v.videoId, v.uuid, v.url){
+
+                }
+                true
+            }
+
+
         }
 
         fun bind(holder: ViewHolder, position: Int) {

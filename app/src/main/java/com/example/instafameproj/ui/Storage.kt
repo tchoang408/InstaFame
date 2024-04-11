@@ -22,7 +22,7 @@ class Storage {
     }
     // https://firebase.google.com/docs/storage/android/upload-files#upload_from_a_local_file
     fun uploadVideoStorage(uri:Uri, videoModel: VideoModel,  uploadSuccess:(Long)->Unit) {
-        val uuidRef = photoStorageVideo.child(videoModel.uuid).child("${videoModel.createdTime.seconds}.mp4")
+        val uuidRef = photoStorageVideo.child(videoModel.uuid).child("${videoModel.videoId}.mp4")
         val metadata = StorageMetadata.Builder()
             .setContentType("video/mp4")
             .build()
@@ -33,13 +33,7 @@ class Storage {
         uploadTask
             .addOnFailureListener {
                 // Handle unsuccessful uploads
-                /*
-                if(localFile.delete()) {
-                    Log.d(javaClass.simpleName, "Upload FAILED $uuid, file deleted")
-                } else {
-                    Log.d(javaClass.simpleName, "Upload FAILED $uuid, file delete FAILED")
-                }
-                 */
+
             }
             .addOnSuccessListener {
                 // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
@@ -49,7 +43,11 @@ class Storage {
                     URL = downloadUrl.toString()
 
                     val sizeBytes = it.metadata?.sizeBytes ?: -1
-                    dbhelpter.updateUserVideoUrl(URL.toString(),videoModel.uuid){
+                    dbhelpter.updateUserVideoUrl(URL,videoModel.uuid){
+                        uploadSuccess(sizeBytes)
+                    }
+
+                    dbhelpter.updateUserVideoId(videoModel.videoId,videoModel.uuid){
                         uploadSuccess(sizeBytes)
                     }
 
@@ -60,30 +58,24 @@ class Storage {
                     }
 
                 }
-
-
-
-
-
-                /*
-                if(localFile.delete()) {
-                    Log.d(javaClass.simpleName, "Upload succeeded $uuid, file deleted")
-                } else {
-                    Log.d(javaClass.simpleName, "Upload succeeded $uuid, file delete FAILED")
-                }
-                */
             }
     }
     // https://firebase.google.com/docs/storage/android/delete-files#delete_a_file
-    fun deleteImage(pictureUUID: String) {
-        // Delete the file
-        // XXX Write me
-        photoStorageVideo.child(pictureUUID).delete()
-            .addOnSuccessListener {
-                Log.d(javaClass.simpleName, "Deleted $pictureUUID")
-            }
+    fun deleteVideo(uuid: String, videoId: String ,uploadSuccess:(Long)->Unit) {
+        val path = "$videoId.mp4"
+        val uuidRef = photoStorageVideo.child(uuid).child(path)
+        val uploadTask = uuidRef.delete()
+
+        // Register observers to listen for when the download is done or if it fails
+        uploadTask
             .addOnFailureListener {
-                Log.d(javaClass.simpleName, "Delete FAILED of $pictureUUID")
+                // Handle unsuccessful uploads
+                val d = "fsdfsd"
+            }
+            .addOnSuccessListener {
+                // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
+                val d = "fsdfsd"
+
             }
     }
     fun fetch(storageReference: StorageReference, imageView: ImageView) {

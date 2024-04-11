@@ -59,9 +59,7 @@ class UserProfileFragment : Fragment() {
 
         binding.userProfilePic.setOnClickListener {
            checkPermissionAndPickPhoto()
-
         }
-
 
         viewModel.observeUserName().observe(viewLifecycleOwner){
             binding.userNameTV.text = it
@@ -75,20 +73,20 @@ class UserProfileFragment : Fragment() {
 
         viewModel.observeUserMeta().observe(viewLifecycleOwner){
             Log.d("createUserMeta", "Create user meta")
-
             viewModel.setQuotes(it.quotes)
             viewModel.setUserName(it.ownerName)
             viewModel.setProfilePic(it.profilePic, binding.userProfilePic)
             val list = mutableListOf<VideoModel>()
-            for(url in it.videoUrl){
+            for( i in it.videoUrl.indices){
                 val videoData = VideoModel(
-                    url = url
+                    url = it.videoUrl[i],
+                    videoId = it.videoId[i],
+                    uuid = it.uuid
                 )
                 list.add(videoData)
             }
+
             adapter.submitList(list)
-
-
         }
         initRecyclerViewGrid()
     }
@@ -96,7 +94,6 @@ class UserProfileFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // ...
-
         photoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
             if(result.resultCode == AppCompatActivity.RESULT_OK){
                 uploadMediaListener(result.data?.data!!)

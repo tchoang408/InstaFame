@@ -1,6 +1,7 @@
 package com.example.instafameproj.ui.home
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -29,13 +30,9 @@ class HomeVideoListAdapter(
     inner class VideoViewHolder(private val binding : HomeVideoRowBinding) : RecyclerView.ViewHolder(binding.root),
         Player.Listener {
         init {
-
-
             itemView.setOnClickListener {
                 val d = it.findViewById<ViewPager2>(R.id.videosRV)
-                d.setOnClickListener {
-                    Log.d("page_click", "update fater")
-                }
+
                 val playerView = it.findViewById<com.google.android.exoplayer2.ui.PlayerView>(R.id.video_view)
                 val player = playerView.player
                 Log.d("Item_click", "fsdfsd")
@@ -48,13 +45,12 @@ class HomeVideoListAdapter(
                     }
                 }
             }
-
-
-
         }
         fun bindVideo(videoModel: VideoModel, position: Int, holder: VideoViewHolder){
             Log.d("Binding_process", "process")
             //bindUserData
+            binding.progressBar.visibility = View.VISIBLE
+
             Firebase.firestore.collection("Users")
                 .document(videoModel.uuid)
                 .get().addOnSuccessListener {
@@ -74,10 +70,7 @@ class HomeVideoListAdapter(
                     }
 
                     binding.captionView.text = videoModel.title
-                    binding.progressBar.visibility = View.GONE
-
                 }
-
             binding.videoView.apply {
                 setVideoPath(videoModel.url)
                 setOnPreparedListener {
@@ -86,15 +79,23 @@ class HomeVideoListAdapter(
                     it.isLooping = true
                     Log.d("is binding", position.toString())
                     Log.d("Title", videoModel.title)
-
-
                 }
-                setOnCompletionListener{
-                    Log.d("complete", "song complete")
+                setOnInfoListener { mp, what, extra ->
+                    when (what) {
+                        MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START -> {
+                            binding.progressBar.visibility = View.GONE
+                        }
+
+                        MediaPlayer.MEDIA_INFO_BUFFERING_START -> {
+                            binding.progressBar.visibility = View.VISIBLE
+                        }
+
+                        MediaPlayer.MEDIA_INFO_BUFFERING_END -> {
+                            binding.progressBar.visibility = View.GONE
+                        }
+                    }
+                     true
                 }
-
-
-                //play pause
                 setOnClickListener {
                     if(isPlaying){
                         pause()

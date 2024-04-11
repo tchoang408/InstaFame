@@ -10,5 +10,7 @@ data class UserModel(
     var profilePic : String = "",
     var followerList : MutableList<String> = mutableListOf(),
     var followingList : MutableList<String> = mutableListOf(),
-    var videoUrl: List<String> = emptyList(),
-)
+    var videoUrl: MutableList<String> = mutableListOf(),
+    var videoId: MutableList<String> = mutableListOf(),
+
+    )
