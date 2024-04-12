@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.instafameproj.R
@@ -22,34 +21,16 @@ import com.google.firebase.ktx.Firebase
 
 
 class HomeVideoListAdapter(
-    options: FirestoreRecyclerOptions<VideoModel>
+    options: FirestoreRecyclerOptions<VideoModel>, private val clickListener: (songIndex : Boolean)->Unit
 ) : FirestoreRecyclerAdapter<VideoModel,HomeVideoListAdapter.VideoViewHolder>(options)  {
     private lateinit var context: Context
-
     inner class VideoViewHolder(private val binding : HomeVideoRowBinding) : RecyclerView.ViewHolder(binding.root){
         init {
-            itemView.setOnClickListener {
-                val d = it.findViewById<ViewPager2>(R.id.videosRV)
-                d.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
-                    Log.d("scroll", "{$scrollX.toString()} + {$scrollY.toString()}")
-                }
-
-                val playerView = it.findViewById<com.google.android.exoplayer2.ui.PlayerView>(R.id.video_view)
-                val player = playerView.player
-                Log.d("Item_click", "fsdfsd")
-                if( player != null){
-                    if(player.isPlaying){
-                        player.pause()
-                    }
-                    else{
-                        player.play()
-                    }
-                }
-            }
 
         }
         fun bindVideo(videoModel: VideoModel, position: Int, holder: VideoViewHolder){
             Log.d("Binding_process", "process")
+
             //bindUserData
             binding.progressBar.visibility = View.VISIBLE
 
@@ -73,42 +54,55 @@ class HomeVideoListAdapter(
 
                     binding.captionView.text = videoModel.title
                 }
-            binding.videoView.apply {
-                setVideoPath(videoModel.url)
-                setOnPreparedListener {
-                    binding.progressBar.visibility = View.GONE
-                    it.start()
-                    it.isLooping = true
-                    Log.d("is binding", position.toString())
-                    Log.d("Title", videoModel.title)
-                }
-                setOnInfoListener { mp, what, extra ->
-                    when (what) {
-                        MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START -> {
-                            binding.progressBar.visibility = View.GONE
-                        }
-
-                        MediaPlayer.MEDIA_INFO_BUFFERING_START -> {
-                            binding.progressBar.visibility = View.VISIBLE
-                        }
-
-                        MediaPlayer.MEDIA_INFO_BUFFERING_END -> {
-                            binding.progressBar.visibility = View.GONE
-                        }
-                    }
-                     true
-                }
-                setOnClickListener {
-                    if(isPlaying){
-                        pause()
-                        binding.pauseIcon.visibility = View.VISIBLE
-                    }else{
-                        start()
+                binding.videoView.apply {
+                    setVideoPath(videoModel.url)
+                    setOnPreparedListener {
+                        binding.progressBar.visibility = View.GONE
+                        it.start()
+                        it.isLooping = true
                         Log.d("is binding", position.toString())
-                        binding.pauseIcon.visibility = View.GONE
+                        Log.d("Title", videoModel.title)
+                        Log.d("Adapter",absoluteAdapterPosition.toString() )
+
+                        if(itemCount == (absoluteAdapterPosition + 1)){
+                            clickListener(true)
+                        }
+                        else{
+                            clickListener(false)
+                        }
+                    }
+                    setOnInfoListener { mp, what, extra ->
+                        when (what) {
+                            MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START -> {
+                                binding.progressBar.visibility = View.GONE
+                            }
+
+                            MediaPlayer.MEDIA_INFO_BUFFERING_START -> {
+                                binding.progressBar.visibility = View.VISIBLE
+                            }
+
+                            MediaPlayer.MEDIA_INFO_BUFFERING_END -> {
+                                binding.progressBar.visibility = View.GONE
+                            }
+                            MediaPlayer.MEDIA_INFO_VIDEO_NOT_PLAYING -> {
+                                mp.stop()
+                                this.suspend()
+                            }
+                        }
+                        true
+                    }
+                    setOnClickListener {
+                        if (isPlaying) {
+                            pause()
+                            binding.pauseIcon.visibility = View.VISIBLE
+                        } else {
+                            start()
+                            Log.d("is binding", position.toString())
+                            binding.pauseIcon.visibility = View.GONE
+                        }
                     }
                 }
-            }
+
 
         }
 
@@ -118,11 +112,15 @@ class HomeVideoListAdapter(
         val binding = HomeVideoRowBinding.inflate(LayoutInflater.from(parent.context),parent,false)
         context =parent.context
 
+        parent.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            Log.d("scroll", "{$oldScrollX} + {$oldScrollY}")
+
+        }
+
         return VideoViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: VideoViewHolder, position: Int, model: VideoModel) {
-
 
         holder.bindVideo(model, position, holder)
     }
@@ -138,7 +136,5 @@ class HomeVideoListAdapter(
         // ...
         Log.d("homeAdapter", "data changed")
     }
-    fun erro(f:Boolean){
 
-    }
 }

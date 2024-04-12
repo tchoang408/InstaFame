@@ -149,9 +149,4 @@ class UserProfileFragment : Fragment() {
         _binding = null
     }
 
-    override fun onStop() {
-        super.onStop()
-        adapter.releasePlayer()
-    }
-
 }

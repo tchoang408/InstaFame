@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -16,7 +15,6 @@ import com.bumptech.glide.Glide
 import com.example.instafameproj.R
 import com.example.instafameproj.databinding.UserVideoRowBinding
 import com.example.instafameproj.ui.Model.VideoModel
-import com.google.android.exoplayer2.ui.PlayerView
 
 
 class UserVideosListAdapter(private val viewModel: UserProfileViewModel,
@@ -137,13 +135,6 @@ class UserVideosListAdapter(private val viewModel: UserProfileViewModel,
                     && oldItem.createdTime == newItem.createdTime
 
         }
-    }
-
-    private fun setVideoThumbnail(playerView: PlayerView, thumbnailImage: ImageView ) {
-        val textureView = playerView.videoSurfaceView as TextureView
-        val bitmap = textureView.bitmap
-        thumbnailImage.setImageBitmap(bitmap)
-        thumbnailImage.visibility = View.VISIBLE
     }
 
     fun releasePlayer(){

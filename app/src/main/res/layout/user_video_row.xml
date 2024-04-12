@@ -24,7 +24,6 @@
         android:id="@+id/videoView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:use_controller="false"
         android:layout_gravity="fill"
         />
 </LinearLayout>

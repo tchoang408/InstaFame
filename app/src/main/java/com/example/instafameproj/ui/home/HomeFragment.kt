@@ -44,6 +44,21 @@ class HomeFragment : Fragment() {
         val mainActivity = (requireActivity() as MainActivity)
         setupViewPager()
         initSwipeLayout(binding.swipeRefreshLayout)
+
+        binding.endViewrefresh.setOnClickListener {
+            val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+            val query = db.collection("Videos")
+                .orderBy("createdTime", Query.Direction.DESCENDING)
+                .orderBy("title")
+                .limit(10)
+
+            val options = FirestoreRecyclerOptions.Builder<VideoModel>()
+                .setQuery(query, VideoModel::class.java)
+                .build()
+
+
+            adapter.updateOptions(options)
+        }
     }
 
 
@@ -52,13 +67,15 @@ class HomeFragment : Fragment() {
         val query = db.collection("Videos")
             .orderBy("title")
             .orderBy("createdTime", Query.Direction.DESCENDING)
-
+            .limit(3)
         val options = FirestoreRecyclerOptions.Builder<VideoModel>()
             .setQuery(query, VideoModel::class.java)
             .build()
 
-        adapter = HomeVideoListAdapter(options)
+
+        adapter = HomeVideoListAdapter(options,::list)
         binding.viewPager.adapter = adapter
+
 
         /*
         binding.homeRV.adapter = adapter
@@ -101,4 +118,12 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+    fun list(s:Boolean){
+        if(s)
+            binding.endViewrefresh.visibility = View.VISIBLE
+        else
+            binding.endViewrefresh.visibility = View.GONE
+    }
+
 }
