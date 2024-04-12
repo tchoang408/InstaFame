@@ -85,6 +85,7 @@ class HomeFragment : Fragment() {
                 val query = db.collection("Videos")
                     .orderBy("createdTime", Query.Direction.DESCENDING)
                     .orderBy("title")
+                    .limit(10)
 
                 val options = FirestoreRecyclerOptions.Builder<VideoModel>()
                     .setQuery(query, VideoModel::class.java)

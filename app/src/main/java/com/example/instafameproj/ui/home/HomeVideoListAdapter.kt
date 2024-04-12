@@ -16,7 +16,6 @@ import com.example.instafameproj.ui.Model.UserModel
 import com.example.instafameproj.ui.Model.VideoModel
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.android.exoplayer2.Player
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -27,11 +26,13 @@ class HomeVideoListAdapter(
 ) : FirestoreRecyclerAdapter<VideoModel,HomeVideoListAdapter.VideoViewHolder>(options)  {
     private lateinit var context: Context
 
-    inner class VideoViewHolder(private val binding : HomeVideoRowBinding) : RecyclerView.ViewHolder(binding.root),
-        Player.Listener {
+    inner class VideoViewHolder(private val binding : HomeVideoRowBinding) : RecyclerView.ViewHolder(binding.root){
         init {
             itemView.setOnClickListener {
                 val d = it.findViewById<ViewPager2>(R.id.videosRV)
+                d.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+                    Log.d("scroll", "{$scrollX.toString()} + {$scrollY.toString()}")
+                }
 
                 val playerView = it.findViewById<com.google.android.exoplayer2.ui.PlayerView>(R.id.video_view)
                 val player = playerView.player
@@ -45,6 +46,7 @@ class HomeVideoListAdapter(
                     }
                 }
             }
+
         }
         fun bindVideo(videoModel: VideoModel, position: Int, holder: VideoViewHolder){
             Log.d("Binding_process", "process")
@@ -115,10 +117,13 @@ class HomeVideoListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
         val binding = HomeVideoRowBinding.inflate(LayoutInflater.from(parent.context),parent,false)
         context =parent.context
+
         return VideoViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: VideoViewHolder, position: Int, model: VideoModel) {
+
+
         holder.bindVideo(model, position, holder)
     }
 
