@@ -66,7 +66,7 @@ class HomeVideoListAdapter(
                             setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_24)
                         }
 
-                        if(likesList.contains(videoModel.uuid)){
+                        if(likesList.contains(videoModel.videoId)){
                             setBackgroundDrawable(likeBt,R.drawable.ic_favorite_black_24dp)
                         }
                         else{
