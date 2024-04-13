@@ -137,7 +137,7 @@ class HomeVideoListAdapter(
                 val a = it as ImageButton
                 if(a.tag != R.drawable.baseline_person_add_alt_1_24) {
                     setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_1_24)
-                    followListener(videoModel.videoId, true )
+                    followListener(videoModel.uuid, true )
                 }
                 else
                 {
