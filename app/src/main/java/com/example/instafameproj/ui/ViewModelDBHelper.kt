@@ -184,4 +184,16 @@ class ViewModelDBHelper {
             .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }
 
     }
+
+    fun removeUserFollower(followerUid:String, uid:String,resultListener: () -> Unit) {
+        val userRef = db.collection(userRootCollection).document(followerUid)
+        userRef
+            .update("followerList", FieldValue.arrayRemove(uid))
+            .addOnSuccessListener {
+                Log.d("UserFollowerAdded", "DocumentSnapshot successfully updated!")
+                resultListener()
+            }
+            .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }
+
+    }
 }

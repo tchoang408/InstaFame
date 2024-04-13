@@ -182,8 +182,20 @@ class UserProfileViewModel : ViewModel() {
            userModel?.followerList!!.add(followerUid)
            currentUser.postValue(userModel!!)
 
-           
+
        }
+    }
+
+
+    fun removeUserFollower(followerUid:String, resultListener: () -> Unit) {
+        dbHelp.addUserFollower(followerUid, currentUser.value?.uuid!!) {
+
+            var userModel = currentUser.value
+            userModel?.followerList!!.add(followerUid)
+            currentUser.postValue(userModel!!)
+
+
+        }
     }
 
 }

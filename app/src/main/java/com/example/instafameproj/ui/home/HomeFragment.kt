@@ -139,6 +139,11 @@ class HomeFragment : Fragment() {
 
             }
         }
+        else{
+            viewModel.removeUserFollower(uid){
+                
+            }
+        }
     }
 
     fun likeListener(uid:String){
