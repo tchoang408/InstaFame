@@ -188,7 +188,7 @@ class UserProfileViewModel : ViewModel() {
 
 
     fun removeUserFollower(followerUid:String, resultListener: () -> Unit) {
-        dbHelp.addUserFollower(followerUid, currentUser.value?.uuid!!) {
+        dbHelp.removeUserFollower(followerUid, currentUser.value?.uuid!!) {
 
             var userModel = currentUser.value
             userModel?.followerList!!.remove(followerUid)
