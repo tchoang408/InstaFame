@@ -141,7 +141,7 @@ class HomeFragment : Fragment() {
         }
         else{
             viewModel.removeUserFollower(uid){
-                
+
             }
         }
     }

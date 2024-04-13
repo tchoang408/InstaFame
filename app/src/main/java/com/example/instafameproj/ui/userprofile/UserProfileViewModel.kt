@@ -191,10 +191,8 @@ class UserProfileViewModel : ViewModel() {
         dbHelp.addUserFollower(followerUid, currentUser.value?.uuid!!) {
 
             var userModel = currentUser.value
-            userModel?.followerList!!.add(followerUid)
+            userModel?.followerList!!.remove(followerUid)
             currentUser.postValue(userModel!!)
-
-
         }
     }
 
