@@ -70,11 +70,10 @@ class Storage {
         uploadTask
             .addOnFailureListener {
                 // Handle unsuccessful uploads
-                val d = "fsdfsd"
             }
             .addOnSuccessListener {
                 // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-                val d = "fsdfsd"
+                Log.d("VideoStorage", "DocumentSnapshot successfully updated!")
 
             }
     }

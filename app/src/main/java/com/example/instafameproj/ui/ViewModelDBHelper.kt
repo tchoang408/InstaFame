@@ -80,15 +80,15 @@ class ViewModelDBHelper {
 
     }
 
-    fun deleteUserVideoUrl(url: String,uid:String, resultListener: () -> Unit){
+    fun deleteUserVideoMeta(url: String, uid:String, resultListener: (Boolean) -> Unit){
 
         val userRef = db.collection(userRootCollection).document(uid)
         Log.d("videoUrl", uid.toString())
         userRef
-            .update("videoUrl", FieldValue.arrayRemove(url))
+            .update("videoUrl", FieldValue.arrayRemove(url), "videoId",  uid)
             .addOnSuccessListener{
-                Log.d("User_Update", "DocumentSnapshot successfully updated!")
-                resultListener()
+                Log.d("UserUserVideoMeta", "DocumentSnapshot successfully updated!")
+                resultListener(true)
             }
             .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }
 
@@ -114,7 +114,7 @@ class ViewModelDBHelper {
         userRef
             .delete()
             .addOnSuccessListener{
-                Log.d("User_Update", "DocumentSnapshot successfully updated!")
+                Log.d("VideoVideoId", "DocumentSnapshot successfully updated!")
                 resultListener()
             }
             .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }

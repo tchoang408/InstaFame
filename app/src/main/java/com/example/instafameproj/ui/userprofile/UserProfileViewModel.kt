@@ -156,24 +156,24 @@ class UserProfileViewModel : ViewModel() {
 
     fun DeleteVideos(videoId: String , uuid: String, url: String, resultListener: (Boolean)->Unit){
 
-        currentUser.value?.videoUrl?.remove(url)
-        currentUser.value?.videoId?.remove(videoId)
 
-        dbHelp.deleteUserVideoUrl(url,uuid){
-            dbHelp.deleteUserVideoId(videoId,uuid){
+        dbHelp.deleteUserVideoMeta(url,uuid){
+            if(it) {
+                currentUser.value?.videoUrl?.remove(url)
                 currentUser.postValue(currentUser.value)
+
+                dbHelp.deleteVideoVideoId(videoId){
+
+                }
+
+
+                storage.deleteVideo(uuid,videoId){
+
+                }
             }
         }
 
-        dbHelp.deleteVideoVideoId(videoId){
 
-        }
-
-
-
-        storage.deleteVideo(uuid,videoId){
-
-        }
     }
 
 }
