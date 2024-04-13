@@ -75,7 +75,11 @@ class HomeFragment : Fragment() {
             .build()
 
 
-        adapter = HomeVideoListAdapter(options,::list, ::followListener, ::likeListener)
+        adapter = HomeVideoListAdapter(options,
+            viewModel.getUserMeta().uuid,
+            ::list,
+            ::followListener,
+            ::likeListener)
         binding.viewPager.adapter = adapter
 
 
