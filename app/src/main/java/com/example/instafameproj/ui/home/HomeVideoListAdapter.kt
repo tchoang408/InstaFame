@@ -58,7 +58,7 @@ class HomeVideoListAdapter(
                             )
                             .into(binding.profileIcon)
                         val a = binding.followBt
-
+                        val likeBt = binding.likeBt
                         if(followerList.contains(userVideoModel.getCurrentAuthUser().uid)){
                             setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_1_24)
                         }
@@ -67,10 +67,10 @@ class HomeVideoListAdapter(
                         }
 
                         if(likesList.contains(userVideoModel.getCurrentAuthUser().uid)){
-                            setBackgroundDrawable(a,R.drawable.ic_favorite_black_24dp)
+                            setBackgroundDrawable(likeBt,R.drawable.ic_favorite_black_24dp)
                         }
                         else{
-                            setBackgroundDrawable(a,R.drawable.heart)
+                            setBackgroundDrawable(likeBt,R.drawable.heart)
                         }
 
                     }
