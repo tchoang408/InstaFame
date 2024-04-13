@@ -146,14 +146,14 @@ class HomeFragment : Fragment() {
         }
     }
 
-    fun likeListener(uid:String, isLikes:Boolean){
+    fun likeListener(videoId:String, isLikes:Boolean){
         if(isLikes){
-            viewModel.addUserLikes(uid){
+            viewModel.addUserLikes(videoId){
 
             }
         }
         else{
-            viewModel.removeUserLikes(uid){
+            viewModel.removeUserLikes(videoId){
 
             }
         }

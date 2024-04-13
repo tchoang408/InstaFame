@@ -131,12 +131,14 @@ class HomeVideoListAdapter(
                     val a = it as ImageButton
                     if(a.tag != R.drawable.ic_favorite_black_24dp) {
                         setBackgroundDrawable(a,R.drawable.ic_favorite_black_24dp)
-                        followListener(videoModel.uuid, true )
+                        likeListener(videoModel.videoId, true )
 
                     }
                     else
                     {
                         setBackgroundDrawable(a,R.drawable.heart)
+                        likeListener(videoModel.videoId, false)
+
                     }
                 }
 
@@ -146,12 +148,13 @@ class HomeVideoListAdapter(
                 if(a.tag != R.drawable.baseline_person_add_alt_1_24) {
                     setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_1_24)
                     likeListener(videoModel.uuid, true )
+                    followListener(videoModel.uuid, true )
+
                 }
                 else
                 {
                     setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_24)
-                    likeListener(videoModel.uuid, false)
-
+                    followListener(videoModel.uuid, false )
                 }
             }
         }

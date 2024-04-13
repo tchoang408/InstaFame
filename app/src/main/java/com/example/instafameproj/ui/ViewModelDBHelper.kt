@@ -198,12 +198,12 @@ class ViewModelDBHelper {
     }
 
 
-    fun addUserLikes(followerUid:String, uid:String,resultListener: () -> Unit) {
-        val userRef = db.collection(userRootCollection).document(followerUid)
+    fun addUserLikes(videoId:String, uid:String,resultListener: () -> Unit) {
+        val userRef = db.collection(userRootCollection).document(uid)
         userRef
-            .update("likesList", FieldValue.arrayUnion(uid))
+            .update("likesList", FieldValue.arrayUnion(videoId))
             .addOnSuccessListener {
-                Log.d("UserFollowerAdded", "DocumentSnapshot successfully updated!")
+                Log.d("UserLikesAdded", "DocumentSnapshot successfully updated!")
                 resultListener()
             }
             .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }
@@ -211,12 +211,12 @@ class ViewModelDBHelper {
     }
 
 
-    fun removeUserLikes(followerUid:String, uid:String,resultListener: () -> Unit) {
-        val userRef = db.collection(userRootCollection).document(followerUid)
+    fun removeUserLikes(videoId:String, uid:String,resultListener: () -> Unit) {
+        val userRef = db.collection(userRootCollection).document(uid)
         userRef
-            .update("followerList", FieldValue.arrayRemove(uid))
+            .update("likesList", FieldValue.arrayRemove(videoId))
             .addOnSuccessListener {
-                Log.d("UserFollowerAdded", "DocumentSnapshot successfully updated!")
+                Log.d("UserFollowerRemove", "DocumentSnapshot successfully updated!")
                 resultListener()
             }
             .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }

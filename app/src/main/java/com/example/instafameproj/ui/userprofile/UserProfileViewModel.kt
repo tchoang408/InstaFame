@@ -197,11 +197,10 @@ class UserProfileViewModel : ViewModel() {
     }
 
 
-    fun addUserLikes(followerUid:String, resultListener: () -> Unit) {
-        dbHelp.addUserLikes(followerUid, currentUser.value?.uuid!!) {
-
+    fun addUserLikes(videoId:String, resultListener: () -> Unit) {
+        dbHelp.addUserLikes(videoId, currentUser.value?.uuid!!) {
             var userModel = currentUser.value
-            userModel?.likesList!!.add(followerUid)
+            userModel?.likesList!!.add(videoId)
             currentUser.postValue(userModel!!)
 
 
@@ -209,11 +208,11 @@ class UserProfileViewModel : ViewModel() {
     }
 
 
-    fun removeUserLikes(followerUid:String, resultListener: () -> Unit) {
-        dbHelp.removeUserLikes(followerUid, currentUser.value?.uuid!!) {
+    fun removeUserLikes(videoUid:String, resultListener: () -> Unit) {
+        dbHelp.removeUserLikes(videoUid, currentUser.value?.uuid!!) {
 
             var userModel = currentUser.value
-            userModel?.likesList!!.remove(followerUid)
+            userModel?.likesList!!.remove(videoUid)
             currentUser.postValue(userModel!!)
         }
     }
