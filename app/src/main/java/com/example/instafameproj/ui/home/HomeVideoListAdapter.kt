@@ -55,9 +55,12 @@ class HomeVideoListAdapter(
                                 RequestOptions().placeholder(R.drawable.icon_profile)
                             )
                             .into(binding.profileIcon)
+
+
                     }
 
                     binding.captionView.text = videoModel.title
+
                 }
                 binding.videoView.apply {
                     setVideoPath(videoModel.url)
