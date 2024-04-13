@@ -76,7 +76,7 @@ class HomeFragment : Fragment() {
 
 
         adapter = HomeVideoListAdapter(options,
-            viewModel.getUserMeta().uuid,
+            viewModel,
             ::list,
             ::followListener,
             ::likeListener)

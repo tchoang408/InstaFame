@@ -15,6 +15,7 @@ import com.example.instafameproj.R
 import com.example.instafameproj.databinding.HomeVideoRowBinding
 import com.example.instafameproj.ui.Model.UserModel
 import com.example.instafameproj.ui.Model.VideoModel
+import com.example.instafameproj.ui.userprofile.UserProfileViewModel
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -24,7 +25,7 @@ import com.google.firebase.ktx.Firebase
 
 class HomeVideoListAdapter(
     options: FirestoreRecyclerOptions<VideoModel>,
-    private val currentUserUUId:String,
+    private val userVideoModel: UserProfileViewModel,
     private val clickListener: (songIndex : Boolean)->Unit,
     private val followListener: (uid:String, isFollow:Boolean)->Unit ,
     private val likeListener: (uid:String)->Unit
@@ -56,9 +57,9 @@ class HomeVideoListAdapter(
                                 RequestOptions().placeholder(R.drawable.icon_profile)
                             )
                             .into(binding.profileIcon)
-
                         val a = binding.followBt
-                        if(followerList.contains(currentUserUUId)){
+
+                        if(followerList.contains(userVideoModel.getCurrentAuthUser().uid)){
                             setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_1_24)
                         }
                         else{
