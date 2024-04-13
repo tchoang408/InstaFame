@@ -172,4 +172,16 @@ class ViewModelDBHelper {
                 Log.w("Upload_video_model", "Error ", e)
             }
     }
+
+    fun addUserFollower(followerUid:String, uid:String,resultListener: () -> Unit) {
+        val userRef = db.collection(userRootCollection).document(uid)
+        userRef
+            .update("followerList", FieldValue.arrayUnion(followerUid))
+            .addOnSuccessListener {
+                Log.d("UserFollowerAdded", "DocumentSnapshot successfully updated!")
+                resultListener()
+            }
+            .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }
+
+    }
 }

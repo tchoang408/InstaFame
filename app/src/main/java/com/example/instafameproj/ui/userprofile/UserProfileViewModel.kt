@@ -175,5 +175,10 @@ class UserProfileViewModel : ViewModel() {
 
 
     }
+    fun addUserFollower(followerUid:String, resultListener: () -> Unit) {
+       dbHelp.addUserFollower(followerUid, currentUser.value?.uuid!!) {
+
+       }
+    }
 
 }

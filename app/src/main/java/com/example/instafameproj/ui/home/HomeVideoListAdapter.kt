@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -21,7 +23,10 @@ import com.google.firebase.ktx.Firebase
 
 
 class HomeVideoListAdapter(
-    options: FirestoreRecyclerOptions<VideoModel>, private val clickListener: (songIndex : Boolean)->Unit
+    options: FirestoreRecyclerOptions<VideoModel>,
+    private val clickListener: (songIndex : Boolean)->Unit,
+    private val followListener: (uid:String, isFollow:Boolean)->Unit ,
+    private val likeListener: (uid:String)->Unit
 ) : FirestoreRecyclerAdapter<VideoModel,HomeVideoListAdapter.VideoViewHolder>(options)  {
     private lateinit var context: Context
     inner class VideoViewHolder(private val binding : HomeVideoRowBinding) : RecyclerView.ViewHolder(binding.root){
@@ -103,7 +108,32 @@ class HomeVideoListAdapter(
                     }
                 }
 
+                binding.likeBt.setOnClickListener {
+                    val a = it as ImageButton
+                    if(a.tag != R.drawable.ic_favorite_black_24dp) {
+                        setBackgroundDrawable(a,R.drawable.ic_favorite_black_24dp)
 
+                    }
+                    else
+                    {
+                        setBackgroundDrawable(a,R.drawable.heart)
+                    }
+                }
+
+
+            binding.followBt.setOnClickListener {
+                val a = it as ImageButton
+                if(a.tag != R.drawable.baseline_person_add_alt_1_24) {
+                    setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_1_24)
+                    followListener(videoModel.videoId, true )
+                }
+                else
+                {
+                    setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_24)
+                    followListener(videoModel.videoId, false)
+
+                }
+            }
         }
 
     }
@@ -127,6 +157,7 @@ class HomeVideoListAdapter(
 
     override fun onError(e: FirebaseFirestoreException) {
         Log.w("FirestoreRecycler", "onError", e)
+
     }
 
 
@@ -135,6 +166,10 @@ class HomeVideoListAdapter(
         // to hide a loading spinner or check for the "no documents" state and update your UI.
         // ...
         Log.d("homeAdapter", "data changed")
+    }
+    fun setBackgroundDrawable(button: ImageView, resourceId: Int) {
+        button.setImageResource(resourceId)
+        button.tag = resourceId
     }
 
 }

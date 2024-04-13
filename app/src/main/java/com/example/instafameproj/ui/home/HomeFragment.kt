@@ -7,10 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.instafameproj.MainActivity
 import com.example.instafameproj.databinding.FragmentHomeBinding
 import com.example.instafameproj.ui.Model.VideoModel
+import com.example.instafameproj.ui.userprofile.UserProfileViewModel
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -23,6 +25,7 @@ class HomeFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
     private lateinit var adapter : HomeVideoListAdapter
+    private val viewModel: UserProfileViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,7 +75,7 @@ class HomeFragment : Fragment() {
             .build()
 
 
-        adapter = HomeVideoListAdapter(options,::list)
+        adapter = HomeVideoListAdapter(options,::list, ::followListener, ::likeListener)
         binding.viewPager.adapter = adapter
 
 
@@ -123,6 +126,19 @@ class HomeFragment : Fragment() {
             binding.endViewrefresh.visibility = View.VISIBLE
         else
             binding.endViewrefresh.visibility = View.GONE
+    }
+
+    fun followListener(uid:String, isFollow:Boolean){
+
+        if(isFollow){
+            viewModel.addUserFollower(uid){
+
+            }
+        }
+    }
+
+    fun likeListener(uid:String){
+
     }
 
 }
