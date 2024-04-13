@@ -196,4 +196,26 @@ class UserProfileViewModel : ViewModel() {
         }
     }
 
+
+    fun addUserLikes(followerUid:String, resultListener: () -> Unit) {
+        dbHelp.addUserLikes(followerUid, currentUser.value?.uuid!!) {
+
+            var userModel = currentUser.value
+            userModel?.likesList!!.add(followerUid)
+            currentUser.postValue(userModel!!)
+
+
+        }
+    }
+
+
+    fun removeUserLikes(followerUid:String, resultListener: () -> Unit) {
+        dbHelp.removeUserLikes(followerUid, currentUser.value?.uuid!!) {
+
+            var userModel = currentUser.value
+            userModel?.likesList!!.remove(followerUid)
+            currentUser.postValue(userModel!!)
+        }
+    }
+
 }

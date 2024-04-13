@@ -146,8 +146,17 @@ class HomeFragment : Fragment() {
         }
     }
 
-    fun likeListener(uid:String){
+    fun likeListener(uid:String, isLikes:Boolean){
+        if(isLikes){
+            viewModel.addUserLikes(uid){
 
+            }
+        }
+        else{
+            viewModel.removeUserLikes(uid){
+
+            }
+        }
     }
 
 }

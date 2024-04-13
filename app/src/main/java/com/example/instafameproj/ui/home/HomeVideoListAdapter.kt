@@ -28,7 +28,7 @@ class HomeVideoListAdapter(
     private val userVideoModel: UserProfileViewModel,
     private val clickListener: (songIndex : Boolean)->Unit,
     private val followListener: (uid:String, isFollow:Boolean)->Unit ,
-    private val likeListener: (uid:String)->Unit
+    private val likeListener: (uid:String, isLike:Boolean)->Unit
 ) : FirestoreRecyclerAdapter<VideoModel,HomeVideoListAdapter.VideoViewHolder>(options)  {
     private lateinit var context: Context
     inner class VideoViewHolder(private val binding : HomeVideoRowBinding) : RecyclerView.ViewHolder(binding.root){
@@ -64,6 +64,13 @@ class HomeVideoListAdapter(
                         }
                         else{
                             setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_24)
+                        }
+
+                        if(likesList.contains(userVideoModel.getCurrentAuthUser().uid)){
+                            setBackgroundDrawable(a,R.drawable.ic_favorite_black_24dp)
+                        }
+                        else{
+                            setBackgroundDrawable(a,R.drawable.heart)
                         }
 
                     }
@@ -124,6 +131,7 @@ class HomeVideoListAdapter(
                     val a = it as ImageButton
                     if(a.tag != R.drawable.ic_favorite_black_24dp) {
                         setBackgroundDrawable(a,R.drawable.ic_favorite_black_24dp)
+                        followListener(videoModel.uuid, true )
 
                     }
                     else
@@ -137,12 +145,12 @@ class HomeVideoListAdapter(
                 val a = it as ImageButton
                 if(a.tag != R.drawable.baseline_person_add_alt_1_24) {
                     setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_1_24)
-                    followListener(videoModel.uuid, true )
+                    likeListener(videoModel.uuid, true )
                 }
                 else
                 {
                     setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_24)
-                    followListener(videoModel.uuid, false)
+                    likeListener(videoModel.uuid, false)
 
                 }
             }
