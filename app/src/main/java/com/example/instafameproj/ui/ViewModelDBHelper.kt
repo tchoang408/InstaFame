@@ -80,12 +80,12 @@ class ViewModelDBHelper {
 
     }
 
-    fun deleteUserVideoMeta(url: String, uid:String, resultListener: (Boolean) -> Unit){
+    fun deleteUserVideoMeta(url: String, uid:String, videoId:String ,resultListener: (Boolean) -> Unit){
 
         val userRef = db.collection(userRootCollection).document(uid)
         Log.d("videoUrl", uid.toString())
         userRef
-            .update("videoUrl", FieldValue.arrayRemove(url), "videoId",  uid)
+            .update("videoUrl", FieldValue.arrayRemove(url), "videoId",  FieldValue.arrayRemove(videoId))
             .addOnSuccessListener{
                 Log.d("UserUserVideoMeta", "DocumentSnapshot successfully updated!")
                 resultListener(true)

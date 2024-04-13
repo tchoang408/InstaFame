@@ -157,7 +157,7 @@ class UserProfileViewModel : ViewModel() {
     fun DeleteVideos(videoId: String , uuid: String, url: String, resultListener: (Boolean)->Unit){
 
 
-        dbHelp.deleteUserVideoMeta(url,uuid){
+        dbHelp.deleteUserVideoMeta(url,uuid,videoId){
             if(it) {
                 currentUser.value?.videoUrl?.remove(url)
                 currentUser.postValue(currentUser.value)
