@@ -142,7 +142,7 @@ class HomeVideoListAdapter(
                 else
                 {
                     setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_24)
-                    followListener(videoModel.videoId, false)
+                    followListener(videoModel.uuid, false)
 
                 }
             }
