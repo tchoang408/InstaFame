@@ -28,7 +28,7 @@ class HomeVideoListAdapter(
     private val currentUserModel: UserProfileViewModel,
     private val clickListener: (songIndex : Boolean)->Unit,
     private val followListener: (uid:String, isFollow:Boolean)->Unit,
-    private val likeListener: (uid:String, isLike:Boolean)->Unit
+    private val likeListener: (videoid:String, videoUid: String ,isLike:Boolean)->Unit
 ) : FirestoreRecyclerAdapter<VideoModel,HomeVideoListAdapter.VideoViewHolder>(options)  {
     private lateinit var context: Context
     inner class VideoViewHolder(private val binding : HomeVideoRowBinding) : RecyclerView.ViewHolder(binding.root){
@@ -158,13 +158,13 @@ class HomeVideoListAdapter(
                 val a = it as ImageButton
                 if(a.tag != R.drawable.ic_favorite_black_24dp) {
                     setBackgroundDrawable(a,R.drawable.ic_favorite_black_24dp)
-                    likeListener(videoModel.videoId, true )
+                    likeListener(videoModel.videoId, videoModel.uuid,true )
 
                 }
                 else
                 {
                     setBackgroundDrawable(a,R.drawable.heart)
-                    likeListener(videoModel.videoId, false)
+                    likeListener(videoModel.videoId,videoModel.uuid, false)
 
                 }
             }

@@ -200,7 +200,7 @@ class UserProfileViewModel : ViewModel() {
     }
 
 
-    fun addUserLikes(videoId:String, resultListener: () -> Unit) {
+    fun addUserLikes(videoId:String, videoUid: String,resultListener: () -> Unit) {
         dbHelp.addUserLikes(videoId, currentUser.value?.uuid!!) {
             var userModel = currentUser.value
             userModel?.likesList!!.add(videoId)
@@ -209,7 +209,7 @@ class UserProfileViewModel : ViewModel() {
 
         }
 
-        dbHelp.addUserLikesCount(currentUser.value?.uuid!!){
+        dbHelp.addUserLikesCount(videoUid){
             var userModel = currentUser.value
             userModel?.likesCount = userModel?.likesCount?.plus(1)!!
             currentUser.postValue(userModel!!)

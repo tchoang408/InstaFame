@@ -167,9 +167,9 @@ class HomeFragment : Fragment() {
         }
     }
 
-    fun likeListener(videoId:String, isLikes:Boolean){
+    fun likeListener(videoId:String, videoUid: String,isLikes:Boolean){
         if(isLikes){
-            viewModel.addUserLikes(videoId){
+            viewModel.addUserLikes(videoId,videoUid){
 
             }
         }
