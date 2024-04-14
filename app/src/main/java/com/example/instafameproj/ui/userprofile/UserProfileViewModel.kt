@@ -34,7 +34,6 @@ class UserProfileViewModel : ViewModel() {
             ownerName = name,
             uuid = uuid,
             email = email,
-            likesCount =  0,
         )
         dbHelp.createUserMeta(userModel) {
             this.currentUser.postValue(it)
