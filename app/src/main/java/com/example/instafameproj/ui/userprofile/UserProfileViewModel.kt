@@ -34,6 +34,7 @@ class UserProfileViewModel : ViewModel() {
             ownerName = name,
             uuid = uuid,
             email = email,
+            likesCount =  0,
         )
         dbHelp.createUserMeta(userModel) {
             this.currentUser.postValue(it)
@@ -208,7 +209,15 @@ class UserProfileViewModel : ViewModel() {
 
 
         }
+
+        dbHelp.addUserLikesCount(currentUser.value?.uuid!!){
+            var userModel = currentUser.value
+            userModel?.likesCount = userModel?.likesCount?.plus(1)!!
+            currentUser.postValue(userModel!!)
+        }
     }
+
+
 
 
     fun removeUserLikes(videoUid:String, resultListener: () -> Unit) {

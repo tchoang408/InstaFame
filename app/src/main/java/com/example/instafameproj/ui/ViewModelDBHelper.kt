@@ -210,6 +210,18 @@ class ViewModelDBHelper {
 
     }
 
+    fun addUserLikesCount(uid:String,resultListener: () -> Unit) {
+        val userRef = db.collection(userRootCollection).document(uid)
+        userRef
+            .update("likesCount", FieldValue.increment(1))
+            .addOnSuccessListener {
+                Log.d("UserLikesAdded", "DocumentSnapshot successfully updated!")
+                resultListener()
+            }
+            .addOnFailureListener { e -> Log.w("User_Update", "Error updating document", e) }
+
+    }
+
 
     fun removeUserLikes(videoId:String, uid:String,resultListener: () -> Unit) {
         val userRef = db.collection(userRootCollection).document(uid)
