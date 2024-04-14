@@ -14,13 +14,12 @@ import com.example.instafameproj.ui.Model.VideoModel
 import com.example.instafameproj.ui.Storage
 import com.example.instafameproj.ui.User
 import com.example.instafameproj.ui.ViewModelDBHelper
-import com.example.instafameproj.ui.invalidUser
 import com.google.firebase.Timestamp
 
 
 class UserProfileViewModel : ViewModel() {
 
-    private var CurrentAuthUser = invalidUser
+    private var CurrentAuthUser = MutableLiveData<User>()
     private var userName = MutableLiveData<String>()
     private var Quotes = MutableLiveData<String>()
     private val dbHelp = ViewModelDBHelper()
@@ -42,10 +41,14 @@ class UserProfileViewModel : ViewModel() {
 
     }
     fun setCurrentAuthUser(user: User) {
-        CurrentAuthUser = user
+        CurrentAuthUser.value = user
     }
-    fun getCurrentAuthUser(): User {
-        return CurrentAuthUser
+    fun getCurrentAuthUser(): User? {
+        return CurrentAuthUser.value
+    }
+
+    fun observeAuthUser(): LiveData<User>{
+       return CurrentAuthUser
     }
 
     fun setUserName(name: String){

@@ -46,12 +46,15 @@ class HomeFragment : Fragment() {
         Log.d(javaClass.simpleName, "onViewCreated")
         val mainActivity = (requireActivity() as MainActivity)
         initSwipeLayout(binding.swipeRefreshLayout)
-        setupViewPager()
+
+        viewModel.observeAuthUser().observe(viewLifecycleOwner){
+            setupViewPager()
+        }
 
         binding.endViewrefresh.setOnClickListener {
             val db: FirebaseFirestore = FirebaseFirestore.getInstance()
             val query = db.collection("Videos")
-                .whereNotEqualTo("uuid", viewModel.getCurrentAuthUser().uid)
+                .whereNotEqualTo("uuid", viewModel.getCurrentAuthUser()?.uid)
                 .orderBy("createdTime", Query.Direction.DESCENDING)
                 .orderBy("title")
                 .limit(10)
@@ -68,8 +71,9 @@ class HomeFragment : Fragment() {
 
     private fun setupViewPager(){
         val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+        val uuid = viewModel.getCurrentAuthUser()?.uid
         val query = db.collection("Videos")
-            .whereNotEqualTo("uuid", viewModel.getCurrentAuthUser().uid)
+            .whereNotEqualTo("uuid", uuid)
             .orderBy("title")
             .orderBy("createdTime", Query.Direction.DESCENDING)
         val options = FirestoreRecyclerOptions.Builder<VideoModel>()
@@ -84,7 +88,7 @@ class HomeFragment : Fragment() {
             ::likeListener)
         binding.viewPager.adapter = adapter
 
-
+        adapter.startListening()
         /*
         binding.homeRV.adapter = adapter
         val layoutManager = LinearLayoutManager(binding.homeRV.context)
@@ -94,7 +98,7 @@ class HomeFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        adapter.startListening()
+
     }
 
     override fun onStop() {
@@ -108,7 +112,7 @@ class HomeFragment : Fragment() {
             if(swipe.isRefreshing){
                 val db: FirebaseFirestore = FirebaseFirestore.getInstance()
                 val query = db.collection("Videos")
-                    .whereNotEqualTo("uuid", viewModel.getCurrentAuthUser().uid)
+                    .whereNotEqualTo("uuid", viewModel.getCurrentAuthUser()?.uid)
                     .orderBy("createdTime", Query.Direction.DESCENDING)
                     .orderBy("title")
                     .limit(10)

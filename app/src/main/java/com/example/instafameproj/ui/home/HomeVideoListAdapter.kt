@@ -63,14 +63,14 @@ class HomeVideoListAdapter(
                 }
 
             Firebase.firestore.collection("Users")
-                .document(this@HomeVideoListAdapter.currentUserModel.getCurrentAuthUser().uid)
+                .document(this@HomeVideoListAdapter.currentUserModel.getCurrentAuthUser()!!.uid)
                 .get().addOnSuccessListener {
                     val followerBt = binding.followBt
                     val likeBt = binding.likeBt
                     val userModel = it?.toObject(UserModel::class.java)
 
                     if (userModel != null) {
-                        if(userModel.followerList.contains(this@HomeVideoListAdapter.currentUserModel.getCurrentAuthUser().uid)){
+                        if(userModel.followerList.contains(this@HomeVideoListAdapter.currentUserModel.getCurrentAuthUser()!!.uid)){
                             setBackgroundDrawable(followerBt,R.drawable.baseline_person_add_alt_1_24)
                         } else{
                             setBackgroundDrawable(followerBt,R.drawable.baseline_person_add_alt_24)

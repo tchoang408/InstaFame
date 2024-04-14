@@ -38,6 +38,6 @@
         android:id="@+id/endViewrefresh"
         android:layout_marginBottom="60dp"
         android:visibility="gone"
-        android:alpha=".3"
+        android:alpha=".6"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>
