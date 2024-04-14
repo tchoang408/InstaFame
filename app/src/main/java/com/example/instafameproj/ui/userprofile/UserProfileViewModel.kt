@@ -211,7 +211,7 @@ class UserProfileViewModel : ViewModel() {
 
         dbHelp.addUserLikesCount(videoUid){
             var userModel = currentUser.value
-            userModel?.likesCount = userModel?.likesCount?.plus(1)!!
+            userModel?.likesCount?.inc()
             currentUser.postValue(userModel!!)
         }
     }

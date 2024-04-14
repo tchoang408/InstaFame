@@ -28,7 +28,7 @@ class HomeVideoListAdapter(
     private val currentUserModel: UserProfileViewModel,
     private val clickListener: (songIndex : Boolean)->Unit,
     private val followListener: (uid:String, isFollow:Boolean)->Unit,
-    private val likeListener: (videoid:String, videoUid: String ,isLike:Boolean)->Unit
+    private val likeListener: (video:String, videoUid: String ,isLike:Boolean)->Unit
 ) : FirestoreRecyclerAdapter<VideoModel,HomeVideoListAdapter.VideoViewHolder>(options)  {
     private lateinit var context: Context
     inner class VideoViewHolder(private val binding : HomeVideoRowBinding) : RecyclerView.ViewHolder(binding.root){
