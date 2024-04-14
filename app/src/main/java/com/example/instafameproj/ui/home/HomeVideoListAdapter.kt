@@ -89,12 +89,22 @@ class HomeVideoListAdapter(
             binding.videoView.apply {
                 setVideoPath(videoModel.url)
                 setOnPreparedListener {
-                    binding.progressBar.visibility = View.GONE
+                    currentUserModel.getUserMeta().followerList
+                    val followerBt = binding.followBt
+
+                    if (currentUserModel.getUserMeta() != null) {
+                        if(currentUserModel.getUserMeta().followerList.contains(videoModel.uuid)){
+                            setBackgroundDrawable(followerBt,R.drawable.baseline_person_add_alt_1_24)
+                        } else{
+                            setBackgroundDrawable(followerBt,R.drawable.baseline_person_add_alt_24)
+                        }
+                    }
                     it.start()
                     it.isLooping = true
                     Log.d("is binding", position.toString())
                     Log.d("Title", videoModel.title)
                     Log.d("Adapter",absoluteAdapterPosition.toString() )
+                    binding.progressBar.visibility = View.GONE
 
                     if(itemCount == (absoluteAdapterPosition + 1)){
                         clickListener(true)
