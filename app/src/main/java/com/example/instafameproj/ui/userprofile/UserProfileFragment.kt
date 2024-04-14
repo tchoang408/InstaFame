@@ -51,6 +51,9 @@ class UserProfileFragment : Fragment() {
         mainActivity = (requireActivity() as MainActivity)
         context = requireContext()
 
+        viewModel.fetchUserMeta(){
+
+        }
         binding.editProfileBT.setOnClickListener {
             findNavController().navigate(R.id.action_toEditProfile)
         }

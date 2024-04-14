@@ -125,22 +125,13 @@ class UserProfileViewModel : ViewModel() {
 
     }
 
-    fun fetchVideos( uuid:String,resultListener: (List<VideoModel>)->Unit){
-
-        storage.getVideos(uuid){
-
-            for( ref in it){
-                ref.downloadUrl.addOnSuccessListener {
-                    var video = VideoModel(
-                        videoId = ref.name,
-                        url = it.toString()
-                    )
-                    videoList.add(video)
-                    resultListener(videoList)
-                }
-
+    fun fetchUserMeta(resultListener: (List<VideoModel>)->Unit){
+        currentUser.value?.let {
+            dbHelp.fetchUserMeta(it.uuid){
+                currentUser.postValue(it)
             }
         }
+
     }
     fun uploadPics(uri: Uri, uuid:String){
         storage.uploadProfilePicsStorage(uri,uuid
