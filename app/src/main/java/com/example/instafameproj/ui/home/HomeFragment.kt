@@ -51,6 +51,7 @@ class HomeFragment : Fragment() {
         binding.endViewrefresh.setOnClickListener {
             val db: FirebaseFirestore = FirebaseFirestore.getInstance()
             val query = db.collection("Videos")
+                .whereNotEqualTo("uuid", viewModel.getCurrentAuthUser().uid)
                 .orderBy("createdTime", Query.Direction.DESCENDING)
                 .orderBy("title")
                 .limit(10)
@@ -107,6 +108,7 @@ class HomeFragment : Fragment() {
             if(swipe.isRefreshing){
                 val db: FirebaseFirestore = FirebaseFirestore.getInstance()
                 val query = db.collection("Videos")
+                    .whereNotEqualTo("uuid", viewModel.getCurrentAuthUser().uid)
                     .orderBy("createdTime", Query.Direction.DESCENDING)
                     .orderBy("title")
                     .limit(10)
