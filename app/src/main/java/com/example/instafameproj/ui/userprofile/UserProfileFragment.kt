@@ -79,6 +79,7 @@ class UserProfileFragment : Fragment() {
             viewModel.setUserName(it.ownerName)
             viewModel.setProfilePic(it.profilePic, binding.userProfilePic)
             binding.folowersCount.text = viewModel.getUserMeta().followerList.size.toString()
+            binding.folowingCount.text = viewModel.getUserMeta().followingList.size.toString()
             binding.likesCounts.text = viewModel.getUserMeta().likesCount.toString()
 
             val list = mutableListOf<VideoModel>()

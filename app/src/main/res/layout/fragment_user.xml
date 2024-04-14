@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.userprofile.UserProfileFragment"
-    android:layout_marginTop="50dp"
+    android:layout_marginTop="40dp"
     >
 
     <LinearLayout
@@ -22,7 +22,7 @@
             android:layout_height="100dp"
             android:id="@+id/imgProfileCV"
             android:layout_marginTop="30dp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="20dp"
             app:cardCornerRadius="100dp"
             >
             <ImageView
@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="29dp"
+            android:layout_marginLeft="20dp"
             android:text="Edit Profile"
             android:id="@+id/editProfileBT"
             android:textSize="10dp"
@@ -48,7 +48,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="50dp"
         android:orientation="vertical"
         android:id="@+id/userInfoLL"
         app:layout_constraintLeft_toRightOf="@id/imgProfileLL"
@@ -78,9 +79,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintLeft_toRightOf="@+id/likesLL"
+        app:layout_constraintLeft_toRightOf="@+id/followerLL"
         app:layout_constraintTop_toBottomOf="@+id/userInfoLL"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/likesLL"
         >
         <TextView
             android:layout_width="wrap_content"
@@ -102,7 +104,7 @@
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@+id/userInfoLL"
         app:layout_constraintLeft_toLeftOf="@+id/userInfoLL"
-        android:id="@+id/likesLL"
+        android:id="@+id/followerLL"
         >
         <TextView
             android:layout_width="wrap_content"
@@ -117,7 +119,34 @@
             android:text="0"
             android:id="@+id/folowersCount"
             />
+
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/userInfoLL"
+        app:layout_constraintLeft_toRightOf="@+id/likesLL"
+        android:id="@+id/followingLL"
+        android:layout_marginLeft="10dp"
+
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Following"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:id="@+id/folowingCount"
+            />
+
+    </LinearLayout>
+
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"

@@ -27,7 +27,7 @@ class HomeVideoListAdapter(
     options: FirestoreRecyclerOptions<VideoModel>,
     private val currentUserModel: UserProfileViewModel,
     private val clickListener: (songIndex : Boolean)->Unit,
-    private val followListener: (uid:String, isFollow:Boolean)->Unit,
+    private val followingListener: (uid:String, isFollow:Boolean)->Unit,
     private val likeListener: (video:String, videoUid: String ,isLike:Boolean)->Unit,
 ) : FirestoreRecyclerAdapter<VideoModel,HomeVideoListAdapter.VideoViewHolder>(options)  {
     private lateinit var context: Context
@@ -66,7 +66,7 @@ class HomeVideoListAdapter(
                         val userModel = it?.toObject(UserModel::class.java)
 
                         if (userModel != null) {
-                            if (userModel.followerList.contains(this@HomeVideoListAdapter.currentUserModel.getCurrentAuthUser()!!.uid)) {
+                            if (userModel.followingList.contains(videoModel.uuid)) {
                                 setBackgroundDrawable(
                                     followerBt,
                                     R.drawable.baseline_person_add_alt_1_24
@@ -91,11 +91,10 @@ class HomeVideoListAdapter(
                 binding.videoView.apply {
                     setVideoPath(videoModel.url)
                     setOnPreparedListener {
-                        currentUserModel.getUserMeta().followerList
                         val followerBt = binding.followBt
 
                         if (currentUserModel.getUserMeta() != null) {
-                            if (currentUserModel.getUserMeta().followerList.contains(videoModel.uuid)) {
+                            if (currentUserModel.getUserMeta().followingList.contains(videoModel.uuid)) {
                                 setBackgroundDrawable(
                                     followerBt,
                                     R.drawable.baseline_person_add_alt_1_24
@@ -172,13 +171,12 @@ class HomeVideoListAdapter(
                 val a = it as ImageButton
                 if(a.tag != R.drawable.baseline_person_add_alt_1_24) {
                     setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_1_24)
-                    followListener(videoModel.uuid, true )
-
+                    followingListener(videoModel.uuid, true )
                 }
                 else
                 {
                     setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_24)
-                    followListener(videoModel.uuid, false )
+                    followingListener(videoModel.uuid, false )
                 }
             }
         }

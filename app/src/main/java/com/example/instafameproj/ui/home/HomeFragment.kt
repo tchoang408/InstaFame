@@ -60,7 +60,7 @@ class HomeFragment : Fragment() {
         adapter = HomeVideoListAdapter(options,
             viewModel,
             ::list,
-            ::followListener,
+            ::followingListener,
             ::likeListener,
         )
         binding.viewPager.adapter = adapter
@@ -133,15 +133,15 @@ class HomeFragment : Fragment() {
             binding.endViewrefresh.visibility = View.GONE
     }
 
-    private fun followListener(uid:String, isFollow:Boolean){
+    private fun followingListener(followingUid:String, isFollow:Boolean){
 
         if(isFollow){
-            viewModel.addUserFollower(uid){
+            viewModel.addUserFollowing(followingUid){
 
             }
         }
         else{
-            viewModel.removeUserFollower(uid){
+            viewModel.removeUserFollower(followingUid){
 
             }
         }
