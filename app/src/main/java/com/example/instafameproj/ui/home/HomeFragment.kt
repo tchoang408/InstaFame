@@ -68,6 +68,7 @@ class HomeFragment : Fragment() {
     private fun setupViewPager(){
         val db: FirebaseFirestore = FirebaseFirestore.getInstance()
         val query = db.collection("Videos")
+            .whereNotEqualTo("uuid", viewModel.getCurrentAuthUser().uid)
             .orderBy("title")
             .orderBy("createdTime", Query.Direction.DESCENDING)
         val options = FirestoreRecyclerOptions.Builder<VideoModel>()
