@@ -86,19 +86,8 @@ class HomeFragment : Fragment() {
         }
 
         binding.endViewrefresh.setOnClickListener {
-            val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-            val uuid =viewModel.getCurrentAuthUser()?.uid
-
-            val query = db.collection("Videos")
-                .whereNotIn("uuid", listOf(uuid))
-                .orderBy("createdTime", Query.Direction.DESCENDING)
-                .orderBy("title")
-
-            val options = FirestoreRecyclerOptions.Builder<VideoModel>()
-                .setQuery(query, VideoModel::class.java)
-                .build()
-            binding.viewPager.adapter = adapter
-            adapter.updateOptions(options)
+            getAllVideos()
+            disableFriendView ()
             adapter.startListening()
 
         }
@@ -106,18 +95,7 @@ class HomeFragment : Fragment() {
 
 
     private fun setupViewPager(){
-        val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-        val uuid =viewModel.getCurrentAuthUser()?.uid
-
-        val query = db.collection("Videos")
-            .whereNotIn("uuid", listOf(uuid))
-            .orderBy("title")
-            .orderBy("createdTime", Query.Direction.DESCENDING)
-        val options = FirestoreRecyclerOptions.Builder<VideoModel>()
-            .setQuery(query, VideoModel::class.java)
-            .build()
-
-        adapter.updateOptions(options)
+        getAllVideos()
     }
 
     override fun onStart() {
@@ -135,18 +113,9 @@ class HomeFragment : Fragment() {
         // XXX Write me
         swipe.setOnRefreshListener {
             if(swipe.isRefreshing){
-                val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-                val uuid =viewModel.getCurrentAuthUser()?.uid
-                val query = db.collection("Videos")
-                    .whereNotIn("uuid", listOf(uuid))
-                    .orderBy("createdTime", Query.Direction.DESCENDING)
-                    .orderBy("title")
+                getAllVideos()
+                disableFriendView ()
 
-                val options = FirestoreRecyclerOptions.Builder<VideoModel>()
-                    .setQuery(query, VideoModel::class.java)
-                    .build()
-
-                adapter.updateOptions(options)
                 swipe.isRefreshing = false
 
                 Handler().postDelayed({
@@ -195,35 +164,55 @@ class HomeFragment : Fragment() {
         if(s)
         {
             val followList = viewModel.getUserMeta().followerList
-            val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-            val query = db.collection("Videos")
-                .whereIn("uuid", followList)
-                .orderBy("title")
-                .orderBy("createdTime", Query.Direction.DESCENDING)
-            val options = FirestoreRecyclerOptions.Builder<VideoModel>()
-                .setQuery(query, VideoModel::class.java)
-                .build()
-
-            adapter.updateOptions(options)
+            if(followList.isEmpty())
+            {
+                followList.add("-1")
+                updatePersonalVideos(followList)
+            }
+            else{
+                updatePersonalVideos(followList)
+            }
 
         }
         else
         {
-            val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-            val uuid =viewModel.getCurrentAuthUser()?.uid
-
-            val query = db.collection("Videos")
-                .whereNotIn("uuid", listOf(uuid))
-                .orderBy("title")
-                .orderBy("createdTime", Query.Direction.DESCENDING)
-            val options = FirestoreRecyclerOptions.Builder<VideoModel>()
-                .setQuery(query, VideoModel::class.java)
-                .build()
-
-            adapter.updateOptions(options)
-
-
+            getAllVideos()
         }
+    }
+
+
+    private fun getAllVideos(){
+        val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+        val uuid =viewModel.getCurrentAuthUser()?.uid
+        val query = db.collection("Videos")
+            .whereNotIn("uuid", listOf(uuid))
+            .orderBy("createdTime", Query.Direction.DESCENDING)
+            .orderBy("title")
+
+        val options = FirestoreRecyclerOptions.Builder<VideoModel>()
+            .setQuery(query, VideoModel::class.java)
+            .build()
+
+        adapter.updateOptions(options)
+    }
+
+    private fun updatePersonalVideos(followList:List<String>){
+        val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+        val query = db.collection("Videos")
+            .whereIn("uuid", followList)
+            .orderBy("title")
+            .orderBy("createdTime", Query.Direction.DESCENDING)
+        val options = FirestoreRecyclerOptions.Builder<VideoModel>()
+            .setQuery(query, VideoModel::class.java)
+            .build()
+
+        adapter.updateOptions(options)
+    }
+
+    private fun disableFriendView(){
+        val drawable: Drawable = binding.friendsBt.background
+        drawable.setTint(Color.WHITE)
+        binding.friendsBt.tag = "0"
     }
 
 }
