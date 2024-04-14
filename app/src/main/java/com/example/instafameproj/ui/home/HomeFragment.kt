@@ -1,5 +1,7 @@
 package com.example.instafameproj.ui.home
 
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -12,7 +14,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.instafameproj.MainActivity
 import com.example.instafameproj.databinding.FragmentHomeBinding
 import com.example.instafameproj.ui.Model.VideoModel
-import com.example.instafameproj.ui.userprofile.UserProfileViewModel
+import com.example.instafameproj.ui.UserProfileViewModel
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -59,10 +61,28 @@ class HomeFragment : Fragment() {
             viewModel,
             ::list,
             ::followListener,
-            ::likeListener)
+            ::likeListener,
+        )
         binding.viewPager.adapter = adapter
+
         viewModel.observeAuthUser().observe(viewLifecycleOwner){
             setupViewPager()
+        }
+
+        binding.friendsBt.setOnClickListener {
+            if(it.tag == "0")
+            {
+                val drawable: Drawable = it.background
+                drawable.setTint(Color.rgb(0x2e,0x8b, 0xC0))
+                it.tag = "1"
+                personalVideo(true)
+            }
+            else{
+                val drawable: Drawable = it.background
+                drawable.setTint(Color.WHITE)
+                it.tag = "0"
+                personalVideo(false)
+            }
         }
 
         binding.endViewrefresh.setOnClickListener {
@@ -73,14 +93,14 @@ class HomeFragment : Fragment() {
                 .whereNotIn("uuid", listOf(uuid))
                 .orderBy("createdTime", Query.Direction.DESCENDING)
                 .orderBy("title")
-                .limit(10)
 
             val options = FirestoreRecyclerOptions.Builder<VideoModel>()
                 .setQuery(query, VideoModel::class.java)
                 .build()
-
-
+            binding.viewPager.adapter = adapter
             adapter.updateOptions(options)
+            adapter.startListening()
+
         }
     }
 
@@ -97,25 +117,12 @@ class HomeFragment : Fragment() {
             .setQuery(query, VideoModel::class.java)
             .build()
 
-
-        adapter = HomeVideoListAdapter(options,
-            viewModel,
-            ::list,
-            ::followListener,
-            ::likeListener)
-        binding.viewPager.adapter = adapter
-
-        adapter.startListening()
-        /*
-        binding.homeRV.adapter = adapter
-        val layoutManager = LinearLayoutManager(binding.homeRV.context)
-        binding.homeRV.layoutManager = layoutManager
-        */
+        adapter.updateOptions(options)
     }
 
     override fun onStart() {
         super.onStart()
-
+        adapter.startListening()
     }
 
     override fun onStop() {
@@ -134,7 +141,6 @@ class HomeFragment : Fragment() {
                     .whereNotIn("uuid", listOf(uuid))
                     .orderBy("createdTime", Query.Direction.DESCENDING)
                     .orderBy("title")
-                    .limit(10)
 
                 val options = FirestoreRecyclerOptions.Builder<VideoModel>()
                     .setQuery(query, VideoModel::class.java)
@@ -151,14 +157,14 @@ class HomeFragment : Fragment() {
         }
     }
 
-    fun list(s:Boolean){
+    private fun list(s:Boolean){
         if(s)
             binding.endViewrefresh.visibility = View.VISIBLE
         else
             binding.endViewrefresh.visibility = View.GONE
     }
 
-    fun followListener(uid:String, isFollow:Boolean){
+    private fun followListener(uid:String, isFollow:Boolean){
 
         if(isFollow){
             viewModel.addUserFollower(uid){
@@ -172,16 +178,51 @@ class HomeFragment : Fragment() {
         }
     }
 
-    fun likeListener(videoId:String, videoUid: String,isLikes:Boolean){
+    private fun likeListener(videoId:String, videoUid: String, isLikes:Boolean){
         if(isLikes){
             viewModel.addUserLikes(videoId,videoUid){
 
             }
         }
         else{
-            viewModel.removeUserLikes(videoId){
+            viewModel.removeUserLikes(videoId, videoUid){
 
             }
+        }
+    }
+
+    private fun personalVideo(s:Boolean){
+        if(s)
+        {
+            val followList = viewModel.getUserMeta().followerList
+            val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+            val query = db.collection("Videos")
+                .whereIn("uuid", followList)
+                .orderBy("title")
+                .orderBy("createdTime", Query.Direction.DESCENDING)
+            val options = FirestoreRecyclerOptions.Builder<VideoModel>()
+                .setQuery(query, VideoModel::class.java)
+                .build()
+
+            adapter.updateOptions(options)
+
+        }
+        else
+        {
+            val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+            val uuid =viewModel.getCurrentAuthUser()?.uid
+
+            val query = db.collection("Videos")
+                .whereNotIn("uuid", listOf(uuid))
+                .orderBy("title")
+                .orderBy("createdTime", Query.Direction.DESCENDING)
+            val options = FirestoreRecyclerOptions.Builder<VideoModel>()
+                .setQuery(query, VideoModel::class.java)
+                .build()
+
+            adapter.updateOptions(options)
+
+
         }
     }
 

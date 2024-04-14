@@ -1,4 +1,4 @@
-package com.example.instafameproj.ui.dashboard
+package com.example.instafameproj.ui.upload
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

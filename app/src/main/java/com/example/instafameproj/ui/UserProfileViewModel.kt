@@ -1,4 +1,4 @@
-package com.example.instafameproj.ui.userprofile
+package com.example.instafameproj.ui
 
 import android.net.Uri
 import android.util.Log
@@ -11,23 +11,17 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.instafameproj.R
 import com.example.instafameproj.ui.Model.UserModel
 import com.example.instafameproj.ui.Model.VideoModel
-import com.example.instafameproj.ui.Storage
-import com.example.instafameproj.ui.User
-import com.example.instafameproj.ui.ViewModelDBHelper
 import com.google.firebase.Timestamp
 
 
 class UserProfileViewModel : ViewModel() {
 
-    private var CurrentAuthUser = MutableLiveData<User>()
+    private var currentAuthUser = MutableLiveData<User>()
     private var userName = MutableLiveData<String>()
-    private var Quotes = MutableLiveData<String>()
+    private var quotes = MutableLiveData<String>()
     private val dbHelp = ViewModelDBHelper()
     private var currentUser = MutableLiveData<UserModel>()
-    private var videoList = mutableListOf<VideoModel>()
-    private var videoModelList = mutableListOf<VideoModel>()
     private val storage = Storage()
-
 
     private fun createUserMeta(name: String, email: String, uuid : String) {
         var userModel = UserModel(
@@ -41,14 +35,14 @@ class UserProfileViewModel : ViewModel() {
 
     }
     fun setCurrentAuthUser(user: User) {
-        CurrentAuthUser.value = user
+        currentAuthUser.value = user
     }
     fun getCurrentAuthUser(): User? {
-        return CurrentAuthUser.value
+        return currentAuthUser.value
     }
 
     fun observeAuthUser(): LiveData<User>{
-       return CurrentAuthUser
+       return currentAuthUser
     }
 
     fun setUserName(name: String){
@@ -64,7 +58,7 @@ class UserProfileViewModel : ViewModel() {
             .into(view)
     }
     fun setQuotes(quotes: String){
-        Quotes.postValue(quotes)
+        this.quotes.postValue(quotes)
     }
 
     fun observeUserName(): LiveData<String>{
@@ -72,7 +66,7 @@ class UserProfileViewModel : ViewModel() {
     }
 
     fun observeQuotes(): LiveData<String>{
-        return Quotes
+        return quotes
     }
 
     fun addUser(name: String, email: String, uid: String){
@@ -80,7 +74,6 @@ class UserProfileViewModel : ViewModel() {
     }
 
     fun updateCurrentUserQuote(quotes:String){
-
         currentUser.value?.quotes = quotes
         var uid = currentUser.value?.uuid
         dbHelp.updateUserMetaQuotes(quotes,uid.toString())
@@ -124,14 +117,12 @@ class UserProfileViewModel : ViewModel() {
         }
 
     }
-
     fun fetchUserMeta(resultListener: (List<VideoModel>)->Unit){
         currentUser.value?.let {
             dbHelp.fetchUserMeta(it.uuid){
                 currentUser.postValue(it)
             }
         }
-
     }
     fun uploadPics(uri: Uri, uuid:String){
         storage.uploadProfilePicsStorage(uri,uuid
@@ -143,12 +134,7 @@ class UserProfileViewModel : ViewModel() {
         }
 
     }
-    fun uploadSuccess(sizeBytes: Long){
-        Log.d("upload_Success", sizeBytes.toString())
-
-    }
-
-    fun DeleteVideos(videoId: String , uuid: String, url: String, resultListener: (Boolean)->Unit){
+    fun deleteVideosMeta(videoId: String, uuid: String, url: String, resultListener: (Boolean)->Unit){
 
 
         dbHelp.deleteUserVideoMeta(url,uuid,videoId){
@@ -180,7 +166,6 @@ class UserProfileViewModel : ViewModel() {
        }
     }
 
-
     fun removeUserFollower(followerUid:String, resultListener: () -> Unit) {
         dbHelp.removeUserFollower(followerUid, currentUser.value?.uuid!!) {
 
@@ -190,13 +175,11 @@ class UserProfileViewModel : ViewModel() {
         }
     }
 
-
     fun addUserLikes(videoId:String, videoUid: String,resultListener: () -> Unit) {
         dbHelp.addUserLikes(videoId, currentUser.value?.uuid!!) {
             var userModel = currentUser.value
             userModel?.likesList!!.add(videoId)
             currentUser.postValue(userModel!!)
-
 
         }
 
@@ -207,14 +190,18 @@ class UserProfileViewModel : ViewModel() {
         }
     }
 
-
-
-
-    fun removeUserLikes(videoUid:String, resultListener: () -> Unit) {
+    fun removeUserLikes(videoId:String,videoUid: String, resultListener: () -> Unit) {
         dbHelp.removeUserLikes(videoUid, currentUser.value?.uuid!!) {
 
             var userModel = currentUser.value
-            userModel?.likesList!!.remove(videoUid)
+            userModel?.likesList!!.remove(videoId)
+            currentUser.postValue(userModel!!)
+        }
+
+
+        dbHelp.removeUserLikesCount(videoUid){
+            var userModel = currentUser.value
+            userModel?.likesCount?.dec()
             currentUser.postValue(userModel!!)
         }
     }

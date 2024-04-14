@@ -10,7 +10,7 @@ import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import com.example.instafameproj.databinding.ActivityMainBinding
 import com.example.instafameproj.ui.AuthUser
-import com.example.instafameproj.ui.userprofile.UserProfileViewModel
+import com.example.instafameproj.ui.UserProfileViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
@@ -34,8 +34,8 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(R.id.action_toUserProfile)
                     true
                 }
-                R.id.navigation_dashboard -> {
-                    navController.navigate(R.id.action_toUserDashBoard)
+                R.id.navigation_Upload -> {
+                    navController.navigate(R.id.action_toUserUpload)
                     true
                 }
                 R.id.navigation_home -> {
@@ -49,7 +49,6 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
-      //  initMenu()
 
     }
     private fun NavController.safeNavigate(direction: NavDirections) {

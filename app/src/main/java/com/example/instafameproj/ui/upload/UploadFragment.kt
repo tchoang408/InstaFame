@@ -1,5 +1,6 @@
-package com.example.instafameproj.ui.dashboard
+package com.example.instafameproj.ui.upload
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,6 +12,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -22,7 +24,7 @@ import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.example.instafameproj.MainActivity
 import com.example.instafameproj.databinding.FragmentUploadBinding
-import com.example.instafameproj.ui.userprofile.UserProfileViewModel
+import com.example.instafameproj.ui.UserProfileViewModel
 
 class UploadFragment : Fragment() {
 
@@ -44,9 +46,8 @@ class UploadFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentUploadBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
-        return root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,13 +59,10 @@ class UploadFragment : Fragment() {
         binding.uploadBt.setOnClickListener {
             setInProgress(true)
             uploadMediaVideo()
-
         }
-
         binding.postThumbnailView.setOnClickListener {
             checkPermissionAndOpenVideoPicker()
         }
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,10 +72,8 @@ class UploadFragment : Fragment() {
             if(result.resultCode == AppCompatActivity.RESULT_OK){
                 selectedVideoUri = result.data?.data
                 Glide.with(binding.postThumbnailView).load(selectedVideoUri).into(binding.postThumbnailView)
-
             }
         }
-
     }
 
     override fun onDestroyView() {
@@ -87,7 +83,6 @@ class UploadFragment : Fragment() {
 
     private fun uploadMediaVideo(){
         if(selectedVideoUri != null) {
-            //val resUri = Uri.parse(("android.resource://" +  mainActivity.packageName.toString() + "/" + R.raw.test1))
             viewModel.uploadVideos(
                 selectedVideoUri!!,
                 viewModel.getUserMeta().uuid,
@@ -110,6 +105,8 @@ class UploadFragment : Fragment() {
         }else{
             binding.progressBar.visibility = View.GONE
             binding.uploadBt.visibility = View.VISIBLE
+            binding.videoCaptionTv.text.clear()
+            hideKeyboard(this.mainActivity)
         }
     }
 
@@ -138,6 +135,12 @@ class UploadFragment : Fragment() {
         videoLauncher.launch(intent)
     }
 
-
+    private fun hideKeyboard(activity: Activity) {
+        val inputMethodManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val currentFocusView = activity.currentFocus
+        currentFocusView?.let {
+            inputMethodManager.hideSoftInputFromWindow(it.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+        }
+    }
 
 }

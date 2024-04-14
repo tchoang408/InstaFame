@@ -8,13 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.instafameproj.databinding.FragmentEditProfileBinding
+import com.example.instafameproj.ui.UserProfileViewModel
 
-/**
- * A simple [Fragment] subclass.
- * Use the [editProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class editProfileFragment : Fragment() {
+
+class EditProfileFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var _binding : FragmentEditProfileBinding? = null
 
@@ -52,7 +49,6 @@ class editProfileFragment : Fragment() {
         binding.editCancelBt.setOnClickListener {
             findNavController().popBackStack()
         }
-
 
     }
 

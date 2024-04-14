@@ -9,7 +9,7 @@
         android:visible="true" />
 
     <item
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_Upload"
         android:icon="@drawable/baseline_add_a_photo_24"
         android:title="Media"
         android:visible="true" />

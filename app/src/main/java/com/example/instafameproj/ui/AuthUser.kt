@@ -69,8 +69,6 @@ class AuthUser(private val registry: ActivityResultRegistry) :
             liveUser.postValue(user)
         }
     }
-    // https://developer.android.com/training/basics/intents/result#separate
-    // Called when lifecycle owner finishes onCreate
     override fun onCreate(owner: LifecycleOwner) {
         signInLauncher = registry.register("key", owner,
             FirebaseAuthUIActivityResultContract()) { result ->
@@ -78,7 +76,6 @@ class AuthUser(private val registry: ActivityResultRegistry) :
             pendingLogin = false
         }
     }
-    // This override makes us a valid FirebaseAuth.AuthStateListener
     override fun onAuthStateChanged(p0: FirebaseAuth) {
         Log.d(TAG, "onAuthStateChanged null? ${p0.currentUser == null}")
         // XXX Write me

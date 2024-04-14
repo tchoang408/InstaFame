@@ -37,18 +37,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         />
-    <ImageButton
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginBottom="180dp"
-        android:background="@drawable/heart"
-        android:layout_marginRight="8dp"
-        android:id="@+id/likeBt"
-        />
+
     <ImageButton
         android:layout_width="32dp"
         android:layout_height="32dp"
@@ -61,6 +50,19 @@
         android:layout_marginRight="5dp"
         android:id="@+id/followBt"
         />
+    <ImageButton
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginBottom="180dp"
+        android:background="@drawable/heart"
+        android:layout_marginRight="8dp"
+        android:id="@+id/likeBt"
+        />
+
 
 
 

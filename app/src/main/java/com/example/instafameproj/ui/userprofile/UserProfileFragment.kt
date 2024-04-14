@@ -24,6 +24,7 @@ import com.example.instafameproj.MainActivity
 import com.example.instafameproj.R
 import com.example.instafameproj.databinding.FragmentUserBinding
 import com.example.instafameproj.ui.Model.VideoModel
+import com.example.instafameproj.ui.UserProfileViewModel
 
 class UserProfileFragment : Fragment() {
 
@@ -105,18 +106,11 @@ class UserProfileFragment : Fragment() {
         }
     }
     private fun initRecyclerViewGrid() {
-        // Define a layout for RecyclerView
-        // Initialize a new instance of RecyclerView Adapter instance
         adapter = UserVideosListAdapter(viewModel){
 
         }
         binding.videosRV.adapter = adapter
-       // val layoutManager = GridLayoutManager(this.context, 2,GridLayoutManager.HORIZONTAL,true)
-      //  binding.videosRV.layoutManager = layoutManager
 
-
-        // Set the adapter for RecyclerView
-       // binding.videosRV.layoutManager = LinearLayoutManager(binding.videosRV.context)
     }
 
     private fun uploadMediaListener(uri: Uri){

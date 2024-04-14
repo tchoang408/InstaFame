@@ -12,8 +12,8 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.instafameproj.ui.dashboard.UploadFragment"
+        android:id="@+id/navigation_Upload"
+        android:name="com.example.instafameproj.ui.upload.UploadFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_upload" />
 
@@ -24,7 +24,7 @@
         tools:layout="@layout/fragment_user" />
     <fragment
         android:id="@+id/EditProfile"
-        android:name="com.example.instafameproj.ui.userprofile.editProfileFragment"
+        android:name="com.example.instafameproj.ui.userprofile.EditProfileFragment"
         android:label="Edit Profile"
         tools:layout="@layout/fragment_edit_profile" />
 
@@ -41,8 +41,8 @@
         app:destination="@+id/navigation_home"/>
 
     <action
-        android:id="@+id/action_toUserDashBoard"
-        app:destination="@+id/navigation_dashboard"/>
+        android:id="@+id/action_toUserUpload"
+        app:destination="@+id/navigation_Upload"/>
 
 </navigation>
 

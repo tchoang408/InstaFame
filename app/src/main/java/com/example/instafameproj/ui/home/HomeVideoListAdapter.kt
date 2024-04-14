@@ -15,7 +15,7 @@ import com.example.instafameproj.R
 import com.example.instafameproj.databinding.HomeVideoRowBinding
 import com.example.instafameproj.ui.Model.UserModel
 import com.example.instafameproj.ui.Model.VideoModel
-import com.example.instafameproj.ui.userprofile.UserProfileViewModel
+import com.example.instafameproj.ui.UserProfileViewModel
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -28,19 +28,15 @@ class HomeVideoListAdapter(
     private val currentUserModel: UserProfileViewModel,
     private val clickListener: (songIndex : Boolean)->Unit,
     private val followListener: (uid:String, isFollow:Boolean)->Unit,
-    private val likeListener: (video:String, videoUid: String ,isLike:Boolean)->Unit
+    private val likeListener: (video:String, videoUid: String ,isLike:Boolean)->Unit,
 ) : FirestoreRecyclerAdapter<VideoModel,HomeVideoListAdapter.VideoViewHolder>(options)  {
     private lateinit var context: Context
     inner class VideoViewHolder(private val binding : HomeVideoRowBinding) : RecyclerView.ViewHolder(binding.root){
         init {
 
         }
-        fun bindVideo(videoModel: VideoModel, position: Int, holder: VideoViewHolder){
-            Log.d("Binding_process", "process")
-
-            //bindUserData
+        fun bindVideo(videoModel: VideoModel, position: Int, holder: VideoViewHolder) {
             binding.progressBar.visibility = View.VISIBLE
-
             Firebase.firestore.collection("Users")
                 .document(videoModel.uuid)
                 .get().addOnSuccessListener {
@@ -99,23 +95,28 @@ class HomeVideoListAdapter(
                         val followerBt = binding.followBt
 
                         if (currentUserModel.getUserMeta() != null) {
-                            if(currentUserModel.getUserMeta().followerList.contains(videoModel.uuid)){
-                                setBackgroundDrawable(followerBt,R.drawable.baseline_person_add_alt_1_24)
-                            } else{
-                                setBackgroundDrawable(followerBt,R.drawable.baseline_person_add_alt_24)
+                            if (currentUserModel.getUserMeta().followerList.contains(videoModel.uuid)) {
+                                setBackgroundDrawable(
+                                    followerBt,
+                                    R.drawable.baseline_person_add_alt_1_24
+                                )
+                            } else {
+                                setBackgroundDrawable(
+                                    followerBt,
+                                    R.drawable.baseline_person_add_alt_24
+                                )
                             }
                         }
                         it.start()
                         it.isLooping = true
                         Log.d("is binding", position.toString())
                         Log.d("Title", videoModel.title)
-                        Log.d("Adapter",absoluteAdapterPosition.toString() )
+                        Log.d("Adapter", absoluteAdapterPosition.toString())
                         binding.progressBar.visibility = View.GONE
 
-                        if(itemCount == (absoluteAdapterPosition + 1)){
+                        if (itemCount == (absoluteAdapterPosition + 1)) {
                             clickListener(true)
-                        }
-                        else{
+                        } else {
                             clickListener(false)
                         }
                     }
@@ -132,6 +133,7 @@ class HomeVideoListAdapter(
                             MediaPlayer.MEDIA_INFO_BUFFERING_END -> {
                                 binding.progressBar.visibility = View.GONE
                             }
+
                             MediaPlayer.MEDIA_INFO_VIDEO_NOT_PLAYING -> {
                                 mp.stop()
                                 this.suspend()
@@ -152,19 +154,15 @@ class HomeVideoListAdapter(
                 }
             }
 
-
-
             binding.likeBt.setOnClickListener {
                 val a = it as ImageButton
-                if(a.tag != R.drawable.ic_favorite_black_24dp) {
-                    setBackgroundDrawable(a,R.drawable.ic_favorite_black_24dp)
-                    likeListener(videoModel.videoId, videoModel.uuid,true )
+                if (a.tag != R.drawable.ic_favorite_black_24dp) {
+                    setBackgroundDrawable(a, R.drawable.ic_favorite_black_24dp)
+                    likeListener(videoModel.videoId, videoModel.uuid, true)
 
-                }
-                else
-                {
-                    setBackgroundDrawable(a,R.drawable.heart)
-                    likeListener(videoModel.videoId,videoModel.uuid, false)
+                } else {
+                    setBackgroundDrawable(a, R.drawable.heart)
+                    likeListener(videoModel.videoId, videoModel.uuid, false)
 
                 }
             }
@@ -209,7 +207,6 @@ class HomeVideoListAdapter(
 
     }
 
-
     override fun onDataChanged() {
         // Called each time there is a new query snapshot. You may want to use this method
         // to hide a loading spinner or check for the "no documents" state and update your UI.
@@ -220,5 +217,4 @@ class HomeVideoListAdapter(
         button.setImageResource(resourceId)
         button.tag = resourceId
     }
-
 }

@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.example.instafameproj.R
 import com.example.instafameproj.databinding.UserVideoRowBinding
 import com.example.instafameproj.ui.Model.VideoModel
+import com.example.instafameproj.ui.UserProfileViewModel
 
 
 class UserVideosListAdapter(private val viewModel: UserProfileViewModel,
@@ -53,7 +54,7 @@ class UserVideosListAdapter(private val viewModel: UserProfileViewModel,
 
             itemView.setOnLongClickListener {
                 val v = getItem(absoluteAdapterPosition)
-                viewModel.DeleteVideos(v.videoId, v.uuid, v.url){
+                viewModel.deleteVideosMeta(v.videoId, v.uuid, v.url){
 
                 }
                 true
