@@ -45,8 +45,8 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d(javaClass.simpleName, "onViewCreated")
         val mainActivity = (requireActivity() as MainActivity)
-        setupViewPager()
         initSwipeLayout(binding.swipeRefreshLayout)
+        setupViewPager()
 
         binding.endViewrefresh.setOnClickListener {
             val db: FirebaseFirestore = FirebaseFirestore.getInstance()

@@ -57,90 +57,98 @@ class HomeVideoListAdapter(
                                 RequestOptions().placeholder(R.drawable.icon_profile)
                             )
                             .into(binding.profileIcon)
-                        val a = binding.followBt
-                        val likeBt = binding.likeBt
-                        if(followerList.contains(this@HomeVideoListAdapter.currentUserModel.getCurrentAuthUser().uid)){
-                            setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_1_24)
-                        }
-                        else{
-                            setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_24)
-                        }
-
-                        if(currentUserModel.getUserMeta().likesList.contains(videoModel.videoId)){
-                            setBackgroundDrawable(likeBt,R.drawable.ic_favorite_black_24dp)
-                        }
-                        else{
-                            setBackgroundDrawable(likeBt,R.drawable.heart)
-                        }
-
                     }
 
                     binding.captionView.text = videoModel.title
-
                 }
-                binding.videoView.apply {
-                    setVideoPath(videoModel.url)
-                    setOnPreparedListener {
-                        binding.progressBar.visibility = View.GONE
-                        it.start()
-                        it.isLooping = true
+
+            Firebase.firestore.collection("Users")
+                .document(this@HomeVideoListAdapter.currentUserModel.getCurrentAuthUser().uid)
+                .get().addOnSuccessListener {
+                    val followerBt = binding.followBt
+                    val likeBt = binding.likeBt
+                    val userModel = it?.toObject(UserModel::class.java)
+
+                    if (userModel != null) {
+                        if(userModel.followerList.contains(this@HomeVideoListAdapter.currentUserModel.getCurrentAuthUser().uid)){
+                            setBackgroundDrawable(followerBt,R.drawable.baseline_person_add_alt_1_24)
+                        } else{
+                            setBackgroundDrawable(followerBt,R.drawable.baseline_person_add_alt_24)
+                        }
+                    }
+
+                    if (userModel != null) {
+                        if(userModel.likesList.contains(videoModel.videoId)){
+                            setBackgroundDrawable(likeBt,R.drawable.ic_favorite_black_24dp)
+                        } else{
+                            setBackgroundDrawable(likeBt,R.drawable.heart)
+                        }
+                    }
+                }
+
+            binding.videoView.apply {
+                setVideoPath(videoModel.url)
+                setOnPreparedListener {
+                    binding.progressBar.visibility = View.GONE
+                    it.start()
+                    it.isLooping = true
+                    Log.d("is binding", position.toString())
+                    Log.d("Title", videoModel.title)
+                    Log.d("Adapter",absoluteAdapterPosition.toString() )
+
+                    if(itemCount == (absoluteAdapterPosition + 1)){
+                        clickListener(true)
+                    }
+                    else{
+                        clickListener(false)
+                    }
+                }
+                setOnInfoListener { mp, what, extra ->
+                    when (what) {
+                        MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START -> {
+                            binding.progressBar.visibility = View.GONE
+                        }
+
+                        MediaPlayer.MEDIA_INFO_BUFFERING_START -> {
+                            binding.progressBar.visibility = View.VISIBLE
+                        }
+
+                        MediaPlayer.MEDIA_INFO_BUFFERING_END -> {
+                            binding.progressBar.visibility = View.GONE
+                        }
+                        MediaPlayer.MEDIA_INFO_VIDEO_NOT_PLAYING -> {
+                            mp.stop()
+                            this.suspend()
+                        }
+                    }
+                    true
+                }
+                setOnClickListener {
+                    if (isPlaying) {
+                        pause()
+                        binding.pauseIcon.visibility = View.VISIBLE
+                    } else {
+                        start()
                         Log.d("is binding", position.toString())
-                        Log.d("Title", videoModel.title)
-                        Log.d("Adapter",absoluteAdapterPosition.toString() )
-
-                        if(itemCount == (absoluteAdapterPosition + 1)){
-                            clickListener(true)
-                        }
-                        else{
-                            clickListener(false)
-                        }
-                    }
-                    setOnInfoListener { mp, what, extra ->
-                        when (what) {
-                            MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START -> {
-                                binding.progressBar.visibility = View.GONE
-                            }
-
-                            MediaPlayer.MEDIA_INFO_BUFFERING_START -> {
-                                binding.progressBar.visibility = View.VISIBLE
-                            }
-
-                            MediaPlayer.MEDIA_INFO_BUFFERING_END -> {
-                                binding.progressBar.visibility = View.GONE
-                            }
-                            MediaPlayer.MEDIA_INFO_VIDEO_NOT_PLAYING -> {
-                                mp.stop()
-                                this.suspend()
-                            }
-                        }
-                        true
-                    }
-                    setOnClickListener {
-                        if (isPlaying) {
-                            pause()
-                            binding.pauseIcon.visibility = View.VISIBLE
-                        } else {
-                            start()
-                            Log.d("is binding", position.toString())
-                            binding.pauseIcon.visibility = View.GONE
-                        }
+                        binding.pauseIcon.visibility = View.GONE
                     }
                 }
+            }
 
-                binding.likeBt.setOnClickListener {
-                    val a = it as ImageButton
-                    if(a.tag != R.drawable.ic_favorite_black_24dp) {
-                        setBackgroundDrawable(a,R.drawable.ic_favorite_black_24dp)
-                        likeListener(videoModel.videoId, true )
+            binding.likeBt.setOnClickListener {
+                val a = it as ImageButton
+                if(a.tag != R.drawable.ic_favorite_black_24dp) {
+                    setBackgroundDrawable(a,R.drawable.ic_favorite_black_24dp)
+                    likeListener(videoModel.videoId, true )
 
-                    }
-                    else
-                    {
-                        setBackgroundDrawable(a,R.drawable.heart)
-                        likeListener(videoModel.videoId, false)
-
-                    }
                 }
+                else
+                {
+                    setBackgroundDrawable(a,R.drawable.heart)
+                    likeListener(videoModel.videoId, false)
+
+                }
+            }
 
 
             binding.followBt.setOnClickListener {
