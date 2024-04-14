@@ -46,6 +46,7 @@ class HomeFragment : Fragment() {
         Log.d(javaClass.simpleName, "onViewCreated")
         val mainActivity = (requireActivity() as MainActivity)
         initSwipeLayout(binding.swipeRefreshLayout)
+        setupViewPager()
 
         viewModel.observeAuthUser().observe(viewLifecycleOwner){
             setupViewPager()
@@ -71,9 +72,7 @@ class HomeFragment : Fragment() {
 
     private fun setupViewPager(){
         val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-        val uuid = viewModel.getCurrentAuthUser()?.uid
         val query = db.collection("Videos")
-            .whereNotEqualTo("uuid", uuid)
             .orderBy("title")
             .orderBy("createdTime", Query.Direction.DESCENDING)
         val options = FirestoreRecyclerOptions.Builder<VideoModel>()
@@ -103,7 +102,8 @@ class HomeFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        adapter.stopListening()
+        if(adapter != null)
+            adapter.stopListening()
     }
 
     private fun initSwipeLayout(swipe : SwipeRefreshLayout) {
