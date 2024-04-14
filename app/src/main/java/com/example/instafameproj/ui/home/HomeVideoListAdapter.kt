@@ -25,9 +25,9 @@ import com.google.firebase.ktx.Firebase
 
 class HomeVideoListAdapter(
     options: FirestoreRecyclerOptions<VideoModel>,
-    private val userVideoModel: UserProfileViewModel,
+    private val currentUserModel: UserProfileViewModel,
     private val clickListener: (songIndex : Boolean)->Unit,
-    private val followListener: (uid:String, isFollow:Boolean)->Unit ,
+    private val followListener: (uid:String, isFollow:Boolean)->Unit,
     private val likeListener: (uid:String, isLike:Boolean)->Unit
 ) : FirestoreRecyclerAdapter<VideoModel,HomeVideoListAdapter.VideoViewHolder>(options)  {
     private lateinit var context: Context
@@ -59,14 +59,14 @@ class HomeVideoListAdapter(
                             .into(binding.profileIcon)
                         val a = binding.followBt
                         val likeBt = binding.likeBt
-                        if(followerList.contains(userVideoModel.getCurrentAuthUser().uid)){
+                        if(followerList.contains(this@HomeVideoListAdapter.currentUserModel.getCurrentAuthUser().uid)){
                             setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_1_24)
                         }
                         else{
                             setBackgroundDrawable(a,R.drawable.baseline_person_add_alt_24)
                         }
 
-                        if(likesList.contains(videoModel.videoId)){
+                        if(currentUserModel.getUserMeta().likesList.contains(videoModel.videoId)){
                             setBackgroundDrawable(likeBt,R.drawable.ic_favorite_black_24dp)
                         }
                         else{
