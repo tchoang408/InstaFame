@@ -46,8 +46,21 @@ class HomeFragment : Fragment() {
         Log.d(javaClass.simpleName, "onViewCreated")
         val mainActivity = (requireActivity() as MainActivity)
         initSwipeLayout(binding.swipeRefreshLayout)
-        setupViewPager()
+        val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+        val query = db.collection("Videos")
+            .orderBy("title")
+            .orderBy("createdTime", Query.Direction.DESCENDING)
+        val options = FirestoreRecyclerOptions.Builder<VideoModel>()
+            .setQuery(query, VideoModel::class.java)
+            .build()
 
+
+        adapter = HomeVideoListAdapter(options,
+            viewModel,
+            ::list,
+            ::followListener,
+            ::likeListener)
+        binding.viewPager.adapter = adapter
         viewModel.observeAuthUser().observe(viewLifecycleOwner){
             setupViewPager()
         }
@@ -73,6 +86,7 @@ class HomeFragment : Fragment() {
     private fun setupViewPager(){
         val db: FirebaseFirestore = FirebaseFirestore.getInstance()
         val query = db.collection("Videos")
+            .whereNotEqualTo("uuid", viewModel.getCurrentAuthUser()?.uid)
             .orderBy("title")
             .orderBy("createdTime", Query.Direction.DESCENDING)
         val options = FirestoreRecyclerOptions.Builder<VideoModel>()
