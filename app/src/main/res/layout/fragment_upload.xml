@@ -37,22 +37,67 @@
 
 
    </LinearLayout>
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       app:layout_constraintTop_toBottomOf="@+id/uploadLayout"
+       android:gravity="right"
+       android:id="@+id/uploadBtLL"
+       >
+      <Button
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="Upload"
+          android:id="@+id/uploadBt"
+          android:layout_margin="10dp"
+          />
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:layout_constraintTop_toBottomOf="@+id/uploadLayout"
-    android:gravity="right"
-    >
+   </LinearLayout>
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="0dp"
+       app:layout_constraintTop_toBottomOf="@id/uploadBtLL"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       android:orientation="vertical"
+       android:weightSum="1"
+       >
+      <androidx.camera.view.PreviewView
+          android:id="@+id/viewFinder"
+          android:layout_centerInParent="true"
+          android:layout_width="match_parent"
+          android:layout_height="0dp"
+          android:layout_above="@id/idBtnRecordVideo"
+          android:layout_margin="5dp"
+          android:layout_weight=".80"
+          />
+      <!-- creating a button to record a video on below line -->
+      <Button
+          android:id="@+id/idBtnRecordVideo"
+          android:layout_width="match_parent"
+          android:layout_height="0dp"
+          android:layout_alignParentBottom="true"
+          android:layout_centerInParent="true"
+          android:layout_marginBottom="30dp"
+          android:text="Record Video"
+          android:textAllCaps="false"
+          android:layout_weight=".1"
+
+          />
+
+   </LinearLayout>
    <Button
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
-       android:text="Upload"
-       android:id="@+id/uploadBt"
-       android:layout_marginRight="40dp"
-       />
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       android:layout_marginBottom="30dp"
+       android:text="Capture"
+       android:id="@+id/videoCaptureButton"
 
-</LinearLayout>
+       />
 
    <ProgressBar
        android:layout_width="match_parent"

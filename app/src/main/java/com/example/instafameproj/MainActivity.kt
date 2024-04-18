@@ -19,6 +19,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var authUser : AuthUser
     private val viewModel: UserProfileViewModel by viewModels()
     private lateinit var navController: NavController
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

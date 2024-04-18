@@ -1,9 +1,13 @@
 package com.example.instafameproj.ui.upload
 
+
+import android.Manifest
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -16,8 +20,17 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.video.MediaStoreOutputOptions
+import androidx.camera.video.Recorder
+import androidx.camera.video.Recording
+import androidx.camera.video.VideoCapture
+import androidx.camera.video.VideoRecordEvent
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
@@ -25,6 +38,8 @@ import com.bumptech.glide.Glide
 import com.example.instafameproj.MainActivity
 import com.example.instafameproj.databinding.FragmentUploadBinding
 import com.example.instafameproj.ui.UserProfileViewModel
+import java.util.Locale
+import java.util.concurrent.ExecutorService
 
 class UploadFragment : Fragment() {
 
@@ -33,6 +48,25 @@ class UploadFragment : Fragment() {
     private var selectedVideoUri : Uri? =null
 
     lateinit var videoLauncher: ActivityResultLauncher<Intent>
+    companion object {
+        private const val CAMERA_PERMISSION_REQUEST_CODE = 100
+        private const val TAG = "CameraXApp"
+        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
+        private val REQUIRED_PERMISSIONS =
+            mutableListOf (
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO
+            ).apply {
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                    add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                }
+            }.toTypedArray()
+    }
+
+    // Create a VideoCapture object
+    private var videoCapture: VideoCapture<Recorder>? = null
+    private var recording: Recording? = null
+    private lateinit var cameraExecutor: ExecutorService
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -47,6 +81,8 @@ class UploadFragment : Fragment() {
     ): View {
         _binding = FragmentUploadBinding.inflate(inflater, container, false)
 
+
+
         return binding.root
     }
 
@@ -56,12 +92,18 @@ class UploadFragment : Fragment() {
         mainActivity = (requireActivity() as MainActivity)
         context = requireContext()
 
+
+
         binding.uploadBt.setOnClickListener {
             setInProgress(true)
             uploadMediaVideo()
         }
         binding.postThumbnailView.setOnClickListener {
             checkPermissionAndOpenVideoPicker()
+        }
+        binding.idBtnRecordVideo.setOnClickListener {
+            requestCameraPermission ()
+            startCamera()
         }
     }
 
@@ -143,4 +185,137 @@ class UploadFragment : Fragment() {
         }
     }
 
+    private fun startCamera() {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+
+        cameraProviderFuture.addListener({
+            // Used to bind the lifecycle of cameras to the lifecycle owner
+            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+            // Preview
+            val previewView = binding.viewFinder
+            val surfaceProvider =  previewView.surfaceProvider
+            val preview = Preview.Builder()
+                .build()
+                .also {
+                    it.setSurfaceProvider(surfaceProvider)
+                }
+
+            // Select back camera as a default
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+            try {
+                // Unbind use cases before rebinding
+                cameraProvider.unbindAll()
+
+                // Bind use cases to camera
+                cameraProvider.bindToLifecycle(
+                    this, cameraSelector, preview)
+
+            } catch(exc: Exception) {
+                Log.e("record video exception", "Use case binding failed", exc)
+            }
+
+        }, ContextCompat.getMainExecutor(context))
+    }
+
+    // Method to check if the required permissions are granted
+    private fun arePermissionsGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    // Method to request permissions
+    private fun requestCameraPermission() {
+        requestPermissions(
+            arrayOf(Manifest.permission.CAMERA),
+            CAMERA_PERMISSION_REQUEST_CODE
+        )
+    }
+
+    // Override onRequestPermissionsResult to handle permission request result
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Camera permission granted, you can now proceed with camera operations
+            } else {
+                // Camera permission denied
+                // You may inform the user or take appropriate action
+            }
+        }
+    }
+    // Implements VideoCapture use case, including start and stop capturing.
+    private fun captureVideo() {
+        val videoCapture = this.videoCapture ?: return
+
+        binding.videoCaptureButton.isEnabled = false
+
+        val curRecording = recording
+        if (curRecording != null) {
+            // Stop the current recording session.
+            curRecording.stop()
+            recording = null
+            return
+        }
+        // create and start a new recording session
+        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
+            .format(System.currentTimeMillis())
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+            put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/CameraX-Video")
+            }
+        }
+
+        val mediaStoreOutputOptions = MediaStoreOutputOptions
+            .Builder(context.contentResolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
+            .setContentValues(contentValues)
+            .build()
+
+        recording = videoCapture.output
+            .prepareRecording(context, mediaStoreOutputOptions)
+            .apply {
+                if (PermissionChecker.checkSelfPermission(context,
+                        Manifest.permission.RECORD_AUDIO) ==
+                    PermissionChecker.PERMISSION_GRANTED)
+                {
+
+                }
+            }
+            .start(ContextCompat.getMainExecutor(context)) { recordEvent ->
+                when (recordEvent) {
+                    is VideoRecordEvent.Start -> {
+                        binding.videoCaptureButton.apply {
+                            isEnabled = true
+                        }
+                    }
+
+                    is VideoRecordEvent.Finalize -> {
+                        if (!recordEvent.hasError()) {
+
+                        } else {
+                            recording?.close()
+                            recording = null
+                            Log.e(
+                                TAG, "Video capture ends with error: " +
+                                        "${recordEvent.error}"
+                            )
+                        }
+                        binding.videoCaptureButton.apply {
+                            isEnabled = true
+                        }
+                    }
+
+                    else -> {}
+                }
+            }
+
+    }
 }

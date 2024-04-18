@@ -77,4 +77,15 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:2.1.0'
     //firebase ui
     implementation 'com.google.firebase:firebase-firestore:23.0.3'
-    implementation 'com.firebaseui:firebase-ui-firestore:7.1.1'}
+    implementation 'com.firebaseui:firebase-ui-firestore:7.1.1'
+
+    def camerax_version = "1.2.2"
+    implementation "androidx.camera:camera-core:${camerax_version}"
+    implementation "androidx.camera:camera-camera2:${camerax_version}"
+    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
+    implementation "androidx.camera:camera-video:${camerax_version}"
+
+    implementation "androidx.camera:camera-view:${camerax_version}"
+    implementation "androidx.camera:camera-extensions:${camerax_version}"
+
+}
