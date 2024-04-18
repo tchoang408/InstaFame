@@ -66,6 +66,9 @@ class HomeFragment : Fragment() {
         binding.viewPager.adapter = adapter
 
         viewModel.observeAuthUser().observe(viewLifecycleOwner){
+            val drawable: Drawable = binding.friendsBt.background
+            drawable.setTint(Color.WHITE)
+            binding.friendsBt.tag = "0"
             setupViewPager()
         }
 
@@ -141,7 +144,7 @@ class HomeFragment : Fragment() {
             }
         }
         else{
-            viewModel.removeUserFollower(followingUid){
+            viewModel.removeUserFollowing(followingUid){
 
             }
         }
@@ -163,14 +166,16 @@ class HomeFragment : Fragment() {
     private fun personalVideo(s:Boolean){
         if(s)
         {
-            val followList = viewModel.getUserMeta().followerList
-            if(followList.isEmpty())
+            val followingList = viewModel.getUserMeta().followingList
+            if(followingList.isEmpty())
             {
-                followList.add("-1")
-                updatePersonalVideos(followList)
+                followingList.add("-1")
+                updatePersonalVideos(followingList)
+                binding.showInfo.visibility = View.VISIBLE
             }
             else{
-                updatePersonalVideos(followList)
+                binding.showInfo.visibility = View.GONE
+                updatePersonalVideos(followingList)
             }
 
         }
