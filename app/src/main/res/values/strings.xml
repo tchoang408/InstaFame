@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">InstaFameProj</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
+    <string name="title_Upload">Dashboard</string>
     <string name="title_notifications">User Profile</string>
     <string name="user_email">User Email</string>
     <string name="user_example_com">user@example.com</string>

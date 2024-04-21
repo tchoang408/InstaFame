@@ -14,7 +14,7 @@
     <fragment
         android:id="@+id/navigation_Upload"
         android:name="com.example.instafameproj.ui.upload.UploadFragment"
-        android:label="@string/title_dashboard"
+        android:label="@string/title_Upload"
         tools:layout="@layout/fragment_upload" />
 
     <fragment

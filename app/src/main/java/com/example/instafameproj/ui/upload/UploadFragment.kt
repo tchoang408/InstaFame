@@ -7,6 +7,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import android.os.Build
@@ -17,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +26,8 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.MediaStoreOutputOptions
+import androidx.camera.video.Quality
+import androidx.camera.video.QualitySelector
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
@@ -101,10 +105,16 @@ class UploadFragment : Fragment() {
         binding.postThumbnailView.setOnClickListener {
             checkPermissionAndOpenVideoPicker()
         }
-        binding.idBtnRecordVideo.setOnClickListener {
+        binding.idBtnStartVideo.setOnClickListener {
             requestCameraPermission ()
             startCamera()
+            binding.idBtnStartVideo.visibility = View.GONE
+            binding.idBtnRecordVideo.visibility = View.VISIBLE
         }
+        binding.idBtnRecordVideo.setOnClickListener {
+            captureVideo()
+        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -192,14 +202,15 @@ class UploadFragment : Fragment() {
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
             // Preview
-            val previewView = binding.viewFinder
-            val surfaceProvider =  previewView.surfaceProvider
-            val preview = Preview.Builder()
+            val previewView = Preview.Builder()
                 .build()
                 .also {
-                    it.setSurfaceProvider(surfaceProvider)
+                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
                 }
-
+            val recorder = Recorder.Builder()
+                .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
+                .build()
+            videoCapture = VideoCapture.withOutput(recorder)
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
@@ -209,7 +220,7 @@ class UploadFragment : Fragment() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview)
+                    this, cameraSelector, previewView,videoCapture)
 
             } catch(exc: Exception) {
                 Log.e("record video exception", "Use case binding failed", exc)
@@ -253,9 +264,6 @@ class UploadFragment : Fragment() {
     // Implements VideoCapture use case, including start and stop capturing.
     private fun captureVideo() {
         val videoCapture = this.videoCapture ?: return
-
-        binding.videoCaptureButton.isEnabled = false
-
         val curRecording = recording
         if (curRecording != null) {
             // Stop the current recording session.
@@ -286,31 +294,33 @@ class UploadFragment : Fragment() {
                         Manifest.permission.RECORD_AUDIO) ==
                     PermissionChecker.PERMISSION_GRANTED)
                 {
-
+                    withAudioEnabled()
                 }
             }
             .start(ContextCompat.getMainExecutor(context)) { recordEvent ->
                 when (recordEvent) {
                     is VideoRecordEvent.Start -> {
-                        binding.videoCaptureButton.apply {
-                            isEnabled = true
+                        binding.idBtnRecordVideo.apply {
+                            binding.idBtnRecordVideo.setBackgroundColor(Color.RED)
                         }
                     }
 
                     is VideoRecordEvent.Finalize -> {
                         if (!recordEvent.hasError()) {
-
+                            val msg = "Video capture succeeded: " +
+                                    "${recordEvent.outputResults.outputUri}"
+                            Toast.makeText(context, msg, Toast.LENGTH_SHORT)
+                                .show()
+                            Log.d(TAG, msg)
                         } else {
                             recording?.close()
                             recording = null
-                            Log.e(
-                                TAG, "Video capture ends with error: " +
-                                        "${recordEvent.error}"
-                            )
+                            Log.e(TAG, "Video capture succeeded: " +
+                                    "${recordEvent.outputResults.outputUri}")
+
                         }
-                        binding.videoCaptureButton.apply {
-                            isEnabled = true
-                        }
+                        binding.idBtnRecordVideo.setBackgroundColor(Color.WHITE)
+
                     }
 
                     else -> {}
