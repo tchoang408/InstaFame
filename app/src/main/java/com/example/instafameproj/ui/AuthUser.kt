@@ -107,7 +107,7 @@ class AuthUser(private val registry: ActivityResultRegistry) :
         }
     }
     fun logout() {
-        if(user() == null) return
+        liveUser.postValue(invalidUser)
         Firebase.auth.signOut()
     }
 
